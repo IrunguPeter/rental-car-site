@@ -312,6 +312,46 @@ section { scroll-margin-top: 72px; }
 .footer-bottom a { color: var(--text-soft); }
 .footer-bottom a:hover { color: var(--text); }
 
+/* Top Call CTA */
+.top-cta {
+  background: var(--accent);
+  color: #fff;
+  padding: 1rem 0;
+  text-align: center;
+}
+.top-cta-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.top-cta-label {
+  color: rgba(255,255,255,0.9);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.top-cta-phone {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.top-cta-phone:hover { text-decoration: underline; }
+.top-cta-whatsapp {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.top-cta-whatsapp:hover { background: rgba(255,255,255,0.3); }
+
 /* Toast */
 .toast {
   position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%); z-index: 200;
