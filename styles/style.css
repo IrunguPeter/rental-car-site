@@ -41,9 +41,9 @@ section { scroll-margin-top: 84px; }
 .btn-ghost:hover { background: rgba(255,255,255,.18); }
 
 /* WhatsApp icon */
-.wa-icon { width: 1.15em; height: 1.15em; flex: 0 0 auto; fill: currentColor; vertical-align: -.15em; }
-.header-whatsapp .wa-icon { width: 20px; height: 20px; }
-.mobile-booking-bar .wa-icon { width: 18px; height: 18px; }
+.whatsapp-icon { width: 1.15em; height: 1.15em; flex: 0 0 auto; fill: currentColor; vertical-align: -.15em; }
+.header-whatsapp .whatsapp-icon { width: 20px; height: 20px; }
+.mobile-booking-bar .whatsapp-icon { width: 18px; height: 18px; }
 
 /* Hover / focus tooltips for buttons and action links */
 [data-tooltip] { position: relative; }
