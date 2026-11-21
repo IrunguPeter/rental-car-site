@@ -362,9 +362,9 @@ section { scroll-margin-top: 72px; }
   .footer-links { text-align: left; }
   .footer-links a { text-align: left; }
   .footer-bottom { flex-direction: row; justify-content: space-between; text-align: left; }
+  .footer-grid { grid-template-columns: 1.2fr 1fr 1.5fr 1.2fr; gap: 2rem; }
   
   .card-details-specs { grid-template-columns: 1fr 1fr; }
-  .card-actions .btn { width: auto; }
   .card-actions .btn { width: auto; }
   
   .btn { width: auto; min-height: 52px; padding: 1rem 2rem; font-size: 1rem; }
