@@ -28,6 +28,7 @@ body {
   color: var(--text);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
 img { display: block; max-width: 100%; height: auto; }
@@ -360,6 +361,7 @@ section { scroll-margin-top: 88px; }
 
 /* Responsive */
 @media (max-width: 900px) {
+  .hero { min-height: 60vh; }
   .container { padding-inline: 1rem; }
   .features-grid, .services-grid, .fleet-grid, .about-grid, .contact-grid { grid-template-columns: 1fr; }
   .form-grid { grid-template-columns: 1fr; }
@@ -374,7 +376,11 @@ section { scroll-margin-top: 88px; }
   .mobile-nav.open { display: flex; }
 }
 @media (max-width: 640px) {
+  .hero { min-height: 50vh; }
   .hero-car { display: none; }
   .footer-grid { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; align-items: flex-start; gap: .75rem; }
+  .btn { min-height: 44px; padding: 0.9rem 1.5rem; font-size: 1rem; }
+  .form-field input, .form-field select, .form-field textarea { min-height: 44px; font-size: 1rem; }
+  .contact-form { padding: 1.2rem; }
 }

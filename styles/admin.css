@@ -19,7 +19,7 @@
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); -webkit-tap-highlight-color: transparent; }
 img { display: block; max-width: 100%; height: auto; }
 
 .container { max-width: 1240px; margin-inline: auto; padding-inline: 1.25rem; }
@@ -165,4 +165,13 @@ img { display: block; max-width: 100%; height: auto; }
   .stats { grid-template-columns: 1fr 1fr; }
   .form-grid { grid-template-columns: 1fr; }
   .vehicle-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .btn { min-height: 44px; padding: 0.9rem 1.5rem; font-size: 1rem; }
+  .form-field input, .form-field select { min-height: 44px; font-size: 1rem; }
+  .vehicle-card { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+  .vehicle-card-image { width: 100%; aspect-ratio: 16 / 9; }
+  .vehicle-placeholder { width: 100%; }
+  .admin-table { font-size: 0.85rem; }
+  .admin-table th, .admin-table td { padding: 0.5rem 0.75rem; }
 }
