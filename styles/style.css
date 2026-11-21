@@ -145,7 +145,7 @@ section { scroll-margin-top: 72px; }
 .hero-sub { color: rgba(255, 255, 255, 0.88); font-size: clamp(0.95rem, 4vw, 1.05rem); max-width: 100%; margin-top: 0; margin-bottom: 1.5rem; line-height: 1.6; }
 .hero-actions { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0; }
 .hero-actions .btn { width: 100%; }
-.hero-form { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 2rem; }
+.hero-form { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 2.5rem; }
 .hero-form h2 { font-size: 1rem; margin-bottom: 0.75rem; color: #fff; }
 .form-note { color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; }
 
