@@ -364,8 +364,51 @@ section { scroll-margin-top: 72px; }
   .footer-bottom { flex-direction: row; justify-content: space-between; text-align: left; }
   .footer-grid { grid-template-columns: 1.2fr 1fr 1.5fr 1.2fr; gap: 2rem; }
   
+  .footer-col.contact-col {
+    background: var(--accent);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    color: #fff;
+    text-align: center;
+  }
+  .footer-col.contact-col h4 {
+    color: #fff;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+  .footer-cta {
+    color: rgba(255,255,255,0.9);
+    font-size: 0.9rem;
+    margin: 0 0 0.75rem;
+  }
+  .footer-phone {
+    display: block;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+  }
+  .footer-phone:hover { text-decoration: underline; }
+  .footer-whatsapp {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .footer-whatsapp:hover { background: rgba(255,255,255,0.3); }
+  
   .card-details-specs { grid-template-columns: 1fr 1fr; }
-  .card-actions .btn { width: auto; }
+}
+
+.card-actions .btn { width: auto; }
   
   .btn { width: auto; min-height: 52px; padding: 1rem 2rem; font-size: 1rem; }
   
