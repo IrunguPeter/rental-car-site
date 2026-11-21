@@ -234,6 +234,10 @@ section { scroll-margin-top: 72px; }
 .card-actions { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
 .card-actions .btn { width: auto; padding: 0.75rem 1.25rem; font-size: 0.9rem; }
 
+@media (max-width: 640px) {
+  .car-card { padding-top: 1.25rem; }
+}
+
 /* Services */
 .services { background: var(--bg-alt); padding: 3rem 0; }
 .services-grid { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
