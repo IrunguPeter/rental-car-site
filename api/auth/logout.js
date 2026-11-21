@@ -9,7 +9,8 @@ export default async function handler(req, res) {
   if (!assertCsrf(req, res)) return;
 
   const admin = await requireAdmin(req, res);
-  if (admin) await logAudit(req, 'session.signed_out', 'account', { email: admin.email });
+  if (!admin) return;
+  await logAudit(req, 'session.signed_out', 'account', { email: admin.email });
   await deleteSession(req);
   clearSessionCookie(res);
   return res.status(200).json({ ok: true });
