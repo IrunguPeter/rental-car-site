@@ -10,7 +10,6 @@
     { "src": "assets/**", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/styles/(.*)", "dest": "/styles/$1" },
     { "src": "/scripts/(.*)", "dest": "/scripts/$1" },
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
