@@ -2,48 +2,103 @@
   "use strict";
 
   const byId = (id) => document.getElementById(id);
-  const STORAGE_KEY = "aurora_admin_data";
+  const API = "/api";
   const GLYPH = { Economy: "🚗", Midsize: "🚘", SUV: "🚙", Luxury: "🚕", Minivan: "🚐" };
   const TYPE_ORDER = ["Economy", "Midsize", "SUV", "Luxury", "Minivan"];
 
-  // ---------- Data ----------
-  function seedData() {
-    return {
-      vehicles: [
-        { id: "v1", name: "Economy", type: "Economy", pricePerDay: 29, images: [], archived: false, createdAt: "2026-11-01" },
-        { id: "v2", name: "Midsize", type: "Midsize", pricePerDay: 39, images: [], archived: false, createdAt: "2026-11-01" },
-        { id: "v3", name: "SUV", type: "SUV", pricePerDay: 59, images: [], archived: false, createdAt: "2026-11-01" },
-        { id: "v4", name: "Luxury", type: "Luxury", pricePerDay: 89, images: [], archived: false, createdAt: "2026-11-01" },
-        { id: "v5", name: "Minivan", type: "Minivan", pricePerDay: 49, images: [], archived: false, createdAt: "2026-11-01" },
-      ],
-      bookings: [
-        { id: "b1", vehicleId: "v1", start: "2026-11-20", end: "2026-11-27", status: "active", createdAt: "2026-11-18" },
-        { id: "b2", vehicleId: "v2", start: "2026-11-18", end: "2026-11-21", status: "active", createdAt: "2026-11-19" },
-        { id: "b3", vehicleId: "v4", start: "2026-11-25", end: "2026-11-27", status: "upcoming", createdAt: "2026-11-24" },
-      ],
-      nextVehicleId: 6,
-      nextBookingId: 4,
-    };
-  }
+  let vehicles = [];
+  let bookings = [];
+  let invoices = [];
 
-  function loadData() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw);
-    } catch (e) { /* fall through to seed */ }
-    const data = seedData();
-    saveData(data);
-    return data;
-  }
-
-  function saveData(data) {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      return true;
-    } catch (e) {
-      toast("Could not save data — is storage available?");
-      return false;
+  // ---------- API helpers ----------
+  async function api(path, opts = {}) {
+    const res = await fetch(API + path, {
+      headers: { "Content-Type": "application/json", ...opts.headers },
+      ...opts,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || "Request failed (" + res.status + ")");
     }
+    if (res.status === 204) return null;
+    return res.json();
+  }
+
+  async function loadVehicles() {
+    vehicles = await api("/vehicles");
+    return vehicles;
+  }
+
+  async function createVehicle(data) {
+    const v = await api("/vehicles", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    vehicles.unshift(v);
+    return v;
+  }
+
+  async function updateVehicle(id, data) {
+    const v = await api("/vehicles?id=" + id, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+    const idx = vehicles.findIndex((x) => x.id === v.id);
+    if (idx >= 0) vehicles[idx] = v;
+    return v;
+  }
+
+  async function deleteVehicle(id) {
+    await api("/vehicles?id=" + id, { method: "DELETE" });
+    vehicles = vehicles.filter((x) => x.id !== id);
+  }
+
+  async function loadBookings() {
+    bookings = await api("/bookings");
+    return bookings;
+  }
+
+  async function createBooking(data) {
+    const b = await api("/bookings", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    bookings.unshift(b);
+    return b;
+  }
+
+  async function deleteBooking(id) {
+    await api("/bookings?id=" + id, { method: "DELETE" });
+    bookings = bookings.filter((x) => x.id !== id);
+  }
+
+  async function loadInvoices() {
+    invoices = await api("/invoices");
+    return invoices;
+  }
+
+  async function createInvoice(data) {
+    const inv = await api("/invoices", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    invoices.unshift(inv);
+    return inv;
+  }
+
+  async function updateInvoice(id, data) {
+    const inv = await api("/invoices?id=" + id, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+    const idx = invoices.findIndex((x) => x.id === inv.id);
+    if (idx >= 0) invoices[idx] = inv;
+    return inv;
+  }
+
+  async function deleteInvoice(id) {
+    await api("/invoices?id=" + id, { method: "DELETE" });
+    invoices = invoices.filter((x) => x.id !== id);
   }
 
   // ---------- Date helpers ----------
@@ -69,59 +124,25 @@
   function isActive(b) {
     if (!b) return false;
     const today = parseDate(todayStr());
-    return !!today && !!parseDate(b.start) && !!parseDate(b.end) && parseDate(b.start) <= today && today <= parseDate(b.end);
+    return !!today && !!parseDate(b.start_date) && !!parseDate(b.end_date) && parseDate(b.start_date) <= today && today <= parseDate(b.end_date);
   }
   function bookingDisplayStatus(b) {
     if (isActive(b)) return "Active";
-    const end = parseDate(b.end);
+    const end = parseDate(b.end_date);
     const today = parseDate(todayStr());
     if (end && today && end < today) return "Completed";
     return "Upcoming";
+  }
+  function invoiceStatusLabel(inv) {
+    if (inv.status === 'settled') return { label: 'Settled', badge: 'settled' };
+    if (inv.status === 'overdue') return { label: 'Overdue', badge: 'overdue' };
+    return { label: 'Pending', badge: 'pending' };
   }
   function addDays(s, n) {
     const d = parseDate(s);
     if (!d) return s;
     d.setDate(d.getDate() + n);
     return toISOLocal(d);
-  }
-  function readFilesAsDataURLs(files) {
-    return Promise.all(Array.from(files).map((file) => new Promise((res, rej) => {
-      const r = new FileReader();
-      r.onload = () => res(r.result);
-      r.onerror = () => rej(new Error("read failed"));
-      r.readAsDataURL(file);
-    })));
-  }
-
-  // ---------- Status & stats ----------
-  function vehicleStatus(vehicle, data) {
-    if (vehicle.archived) return { label: "Archived", badge: "archived", note: "Hidden from the rental fleet." };
-    const active = data.bookings.find((b) => b.vehicleId === vehicle.id && isActive(b));
-    if (active) return { label: "Rented", badge: "rented", note: "Rented until " + fmtDate(active.end) };
-    const upcoming = data.bookings.find((b) => b.vehicleId === vehicle.id && parseDate(b.start) > parseDate(todayStr()));
-    if (upcoming) return { label: "Upcoming", badge: "upcoming", note: "Booked from " + fmtDate(upcoming.start) };
-    return { label: "Available", badge: "available", note: "Ready for new bookings" };
-  }
-
-  function utilizationType(type, data) {
-    const ofType = data.vehicles.filter((v) => v.type === type && !v.archived);
-    const busy = ofType.filter((v) => vehicleStatus(v, data).label === "Rented");
-    if (!ofType.length) return { pct: 0, busy: 0, total: 0 };
-    return { pct: Math.round((busy.length / ofType.length) * 100), busy: busy.length, total: ofType.length };
-  }
-
-  function statTotals(data) {
-    const statuses = data.vehicles.map((v) => vehicleStatus(v, data));
-    const nonArchived = data.vehicles.filter((v) => !v.archived).length;
-    const rented = statuses.filter((s) => s.label === "Rented").length;
-    return {
-      total: data.vehicles.length,
-      rented,
-      available: statuses.filter((s) => s.label === "Available").length,
-      upcoming: statuses.filter((s) => s.label === "Upcoming").length,
-      bookedDays: data.bookings.reduce((n, b) => n + daysBetween(b.start, b.end), 0),
-      utilization: nonArchived ? Math.round((rented / nonArchived) * 100) : 0,
-    };
   }
 
   // ---------- Toast ----------
@@ -133,9 +154,33 @@
     setTimeout(() => el.classList.remove("visible"), 2600);
   }
 
+  // ---------- Status & stats ----------
+  function vehicleStatus(v) {
+    if (v.status === "archived") return { label: "Archived", badge: "archived", note: "Hidden from the rental fleet." };
+    const active = bookings.find((b) => b.vehicle_id === v.id && isActive(b));
+    if (active) return { label: "Rented", badge: "rented", note: "Rented until " + fmtDate(active.end_date) };
+    const upcoming = bookings.find((b) => b.vehicle_id === v.id && parseDate(b.start_date) > parseDate(todayStr()));
+    if (upcoming) return { label: "Upcoming", badge: "upcoming", note: "Booked from " + fmtDate(upcoming.start_date) };
+    return { label: "Available", badge: "available", note: "Ready for new bookings" };
+  }
+
+  function statTotals() {
+    const nonArchived = vehicles.filter((v) => v.status !== "archived");
+    const statuses = vehicles.map(vehicleStatus);
+    const rented = statuses.filter((s) => s.label === "Rented").length;
+    return {
+      total: vehicles.length,
+      rented,
+      available: statuses.filter((s) => s.label === "Available").length,
+      upcoming: statuses.filter((s) => s.label === "Upcoming").length,
+      bookedDays: bookings.reduce((n, b) => n + daysBetween(b.start_date, b.end_date), 0),
+      utilization: nonArchived.length ? Math.round((rented / nonArchived.length) * 100) : 0,
+    };
+  }
+
   // ---------- Rendering: stats ----------
-  function renderStats(data) {
-    const totals = statTotals(data);
+  function renderStats() {
+    const totals = statTotals();
     const items = [
       ["Total vehicles", totals.total],
       ["Rented now", totals.rented],
@@ -155,11 +200,11 @@
   }
 
   // ---------- Rendering: vehicles ----------
-  function renderVehicleGrid(data) {
+  function renderVehicleGrid() {
     const grid = byId("vehicle-grid");
     grid.innerHTML = "";
-    data.vehicles.forEach((v) => grid.appendChild(renderVehicleCard(v, data)));
-    if (!data.vehicles.length) {
+    vehicles.forEach((v) => grid.appendChild(renderVehicleCard(v)));
+    if (!vehicles.length) {
       const p = document.createElement("p");
       p.className = "empty";
       p.textContent = "No vehicles yet — add one above.";
@@ -167,27 +212,20 @@
     }
   }
 
-  function renderVehicleCard(v, data) {
-    const st = vehicleStatus(v, data);
+  function renderVehicleCard(v) {
+    const st = vehicleStatus(v);
     const card = document.createElement("article");
     card.className = "vehicle-card";
 
     const imgWrap = document.createElement("div");
     imgWrap.className = "vehicle-card-image";
-    if (v.images && v.images.length) {
-      const img = document.createElement("img");
-      img.src = v.images[0];
-      img.alt = v.name + " photo";
-      imgWrap.appendChild(img);
-    } else {
-      const ph = document.createElement("div");
-      ph.className = "vehicle-placeholder card-img card-img--" + v.type.toLowerCase();
-      const span = document.createElement("span");
-      span.className = "car-glyph";
-      span.textContent = GLYPH[v.type] || "🚗";
-      ph.appendChild(span);
-      imgWrap.appendChild(ph);
-    }
+    const ph = document.createElement("div");
+    ph.className = "vehicle-placeholder card-img card-img--" + v.type.toLowerCase();
+    const span = document.createElement("span");
+    span.className = "car-glyph";
+    span.textContent = GLYPH[v.type] || "🚗";
+    ph.appendChild(span);
+    imgWrap.appendChild(ph);
 
     const body = document.createElement("div");
     body.className = "vehicle-card-body";
@@ -203,7 +241,7 @@
 
     const price = document.createElement("p");
     price.className = "vehicle-price";
-    price.textContent = "$" + v.pricePerDay + " / day";
+    price.textContent = "KSh " + v.price + " / day";
 
     const note = document.createElement("p");
     note.className = "vehicle-note";
@@ -217,49 +255,64 @@
     editBtn.addEventListener("click", () => editVehicle(v));
     const archiveBtn = document.createElement("button");
     archiveBtn.className = "btn small archive";
-    archiveBtn.textContent = v.archived ? "Restore" : "Archive";
+    archiveBtn.textContent = v.status === "archived" ? "Restore" : "Archive";
     archiveBtn.addEventListener("click", () => archiveVehicle(v));
-    actions.append(editBtn, archiveBtn);
+    const delBtn = document.createElement("button");
+    delBtn.className = "btn small danger";
+    delBtn.textContent = "Delete";
+    delBtn.addEventListener("click", () => deleteVehicleConfirm(v));
+    actions.append(editBtn, archiveBtn, delBtn);
 
     body.append(head, price, note, actions);
     card.append(imgWrap, body);
     return card;
   }
 
-  function archiveVehicle(v) {
-    v.archived = !v.archived;
-    if (saveData(state.data)) {
-      toast(v.archived ? "Vehicle archived." : "Vehicle restored.");
+  async function archiveVehicle(v) {
+    try {
+      await updateVehicle(v.id, { status: v.status === "archived" ? "available" : "archived" });
+      toast(v.status === "archived" ? "Vehicle restored." : "Vehicle archived.");
       renderAll();
+    } catch (err) {
+      toast(err.message);
+    }
+  }
+
+  async function deleteVehicleConfirm(v) {
+    if (!confirm("Delete " + v.name + "?")) return;
+    try {
+      await deleteVehicle(v.id);
+      toast("Vehicle deleted.");
+      renderAll();
+    } catch (err) {
+      toast(err.message);
     }
   }
 
   function editVehicle(v) {
-    state.formState.vehicleId = v.id;
+    byId("vehicle-id").value = v.id;
     byId("name").value = v.name;
     byId("type").value = v.type;
-    byId("price").value = v.pricePerDay;
-    byId("status").value = v.archived ? "archived" : "available";
-    state.formImages = v.images.slice();
+    byId("price").value = v.price;
+    byId("status").value = v.status;
     byId("save-btn").textContent = "Save Vehicle";
     byId("cancel-btn").hidden = false;
-    renderImagePreviews();
     byId("vehicle-form").scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   // ---------- Rendering: bookings ----------
-  function renderBookings(data) {
+  function renderBookings() {
     const tbody = byId("bookings-tbody");
     const empty = byId("bookings-empty");
     tbody.innerHTML = "";
-    empty.hidden = data.bookings.length > 0;
-    const rows = data.bookings.map((b) => {
-      const vehicle = data.vehicles.find((v) => v.id === b.vehicleId);
+    empty.hidden = bookings.length > 0;
+    bookings.forEach((b) => {
+      const vehicle = vehicles.find((v) => v.id === b.vehicle_id);
       const row = document.createElement("tr");
       const cells = [
-        vehicle ? vehicle.name : b.vehicleId,
-        fmtDate(b.start) + " – " + fmtDate(b.end),
-        daysBetween(b.start, b.end) + " days",
+        vehicle ? vehicle.name : "Vehicle #" + b.vehicle_id,
+        fmtDate(b.start_date) + " – " + fmtDate(b.end_date),
+        daysBetween(b.start_date, b.end_date) + " days",
         bookingDisplayStatus(b),
       ];
       cells.forEach((text) => {
@@ -271,158 +324,166 @@
       const cancelBtn = document.createElement("button");
       cancelBtn.className = "btn small danger";
       cancelBtn.textContent = "Cancel";
-      cancelBtn.addEventListener("click", () => {
-        data.bookings = data.bookings.filter((x) => x.id !== b.id);
-        if (saveData(data)) {
-          toast("Booking cancelled.");
-          renderAll();
-        }
-      });
+      cancelBtn.addEventListener("click", () => cancelBooking(b));
       actions.appendChild(cancelBtn);
       row.appendChild(actions);
-      return row;
-    });
-    tbody.append(...rows);
-  }
-
-  // ---------- Rendering: utilization ----------
-  function renderUtilization(data) {
-    const list = byId("utilization-list");
-    list.innerHTML = "";
-    TYPE_ORDER.filter((t) => data.vehicles.some((v) => v.type === t)).forEach((t) => {
-      const u = utilizationType(t, data);
-      const item = document.createElement("div");
-      item.className = "util-item";
-      const head = document.createElement("div");
-      head.className = "util-head";
-      const name = document.createElement("span");
-      name.className = "util-name";
-      name.textContent = t;
-      const label = document.createElement("span");
-      label.className = "util-pct";
-      label.textContent = u.busy + " / " + u.total + " booked";
-      const pct = document.createElement("span");
-      pct.className = "util-num";
-      pct.textContent = u.pct + "%";
-      head.append(name, label, pct);
-      const bar = document.createElement("div");
-      bar.className = "util-bar";
-      const fill = document.createElement("div");
-      fill.className = "util-fill";
-      fill.style.width = u.pct + "%";
-      bar.appendChild(fill);
-      item.append(head, bar);
-      list.appendChild(item);
+      tbody.appendChild(row);
     });
   }
 
-  function renderBookingVehicleOptions(data) {
+  async function cancelBooking(b) {
+    if (!confirm("Cancel booking for " + (b.customer_name) + "?")) return;
+    try {
+      await deleteBooking(b.id);
+      toast("Booking cancelled.");
+      renderAll();
+    } catch (err) {
+      toast(err.message);
+    }
+  }
+
+  // ---------- Rendering: invoices ----------
+  function renderInvoices() {
+    const tbody = byId("invoices-tbody");
+    const empty = byId("invoices-empty");
+    tbody.innerHTML = "";
+    empty.hidden = invoices.length > 0;
+    invoices.forEach((inv) => {
+      const booking = bookings.find((b) => b.id === inv.booking_id);
+      const vehicle = booking ? vehicles.find((v) => v.id === booking.vehicle_id) : null;
+      const st = invoiceStatusLabel(inv);
+      const row = document.createElement("tr");
+      const cells = [
+        "INV-" + String(inv.id).padStart(4, "0"),
+        vehicle ? vehicle.name : "Vehicle #" + (booking ? booking.vehicle_id : "-"),
+        inv.customer_name || (booking ? booking.customer_name : "-"),
+        "KSh " + inv.amount,
+        fmtDate(inv.due_date),
+        st.label,
+      ];
+      cells.forEach((text) => {
+        const td = document.createElement("td");
+        td.textContent = text;
+        row.appendChild(td);
+      });
+      // status cell with toggle
+      const statusTd = document.createElement("td");
+      const badge = document.createElement("span");
+      badge.className = "badge badge--" + st.badge;
+      badge.textContent = st.label;
+      const settleBtn = document.createElement("button");
+      settleBtn.className = "btn small settle";
+      settleBtn.textContent = inv.status === 'settled' ? 'Unsettle' : 'Mark Settled';
+      settleBtn.addEventListener("click", () => toggleSettled(inv));
+      statusTd.append(badge, document.createElement("br"), settleBtn);
+      row.appendChild(statusTd);
+
+      const actions = document.createElement("td");
+      const delBtn = document.createElement("button");
+      delBtn.className = "btn small danger";
+      delBtn.textContent = "Delete";
+      delBtn.addEventListener("click", () => deleteInvoiceConfirm(inv));
+      actions.appendChild(delBtn);
+      row.appendChild(actions);
+
+      tbody.appendChild(row);
+    });
+  }
+
+  async function toggleSettled(inv) {
+    try {
+      await updateInvoice(inv.id, { status: inv.status === 'settled' ? 'pending' : 'settled' });
+      toast("Invoice " + (inv.status === 'settled' ? 'marked unsettled.' : 'marked settled.'));
+      renderAll();
+    } catch (err) {
+      toast(err.message);
+    }
+  }
+
+  async function deleteInvoiceConfirm(inv) {
+    if (!confirm("Delete invoice INV-" + String(inv.id).padStart(4, "0") + "?")) return;
+    try {
+      await deleteInvoice(inv.id);
+      toast("Invoice deleted.");
+      renderAll();
+    } catch (err) {
+      toast(err.message);
+    }
+  }
+
+  function renderBookingVehicleOptions() {
     const select = byId("booking-vehicle");
     select.innerHTML = '<option value="">— Choose a vehicle —</option>';
-    data.vehicles.forEach((v) => {
+    vehicles.forEach((v) => {
       const o = document.createElement("option");
       o.value = v.id;
-      o.textContent = v.name + (v.archived ? " (Archived)" : " — $" + v.pricePerDay + "/day");
+      o.textContent = v.name + (v.status === "archived" ? " (Archived)" : " — KSh " + v.price + "/day");
       select.appendChild(o);
     });
   }
 
   function renderAll() {
-    const data = state.data;
-    renderStats(data);
-    renderVehicleGrid(data);
-    renderBookingVehicleOptions(data);
-    renderBookings(data);
-    renderUtilization(data);
+    renderStats();
+    renderVehicleGrid();
+    renderBookingVehicleOptions();
+    renderInvoiceBookingOptions();
+    renderBookings();
+    renderInvoices();
   }
 
-  // ---------- State ----------
-  const state = { data: loadData(), formState: { vehicleId: null }, formImages: [] };
+  // ---------- State & init ----------
+  let initialized = false;
+  async function init() {
+    try {
+      await loadVehicles();
+      await loadBookings();
+      await loadInvoices();
+      renderAll();
+      initialized = true;
+    } catch (err) {
+      toast("Failed to load data: " + err.message);
+      console.error(err);
+    }
+  }
 
   // ---------- Vehicle form ----------
   function resetVehicleForm() {
+    byId("vehicle-id").value = "";
     byId("name").value = "";
     byId("type").value = "Economy";
     byId("price").value = "";
     byId("status").value = "available";
-    state.formImages = [];
-    state.formState.vehicleId = null;
     byId("save-btn").textContent = "Add Vehicle";
     byId("cancel-btn").hidden = true;
-    renderImagePreviews();
   }
 
-  byId("vehicle-form").addEventListener("submit", (e) => {
+  byId("vehicle-form").addEventListener("submit", async (e) => {
     e.preventDefault();
+    const id = byId("vehicle-id").value.trim();
     const name = byId("name").value.trim();
     const type = byId("type").value;
-    const priceText = byId("price").value.trim();
-    const price = parseFloat(priceText);
+    const price = parseFloat(byId("price").value.trim());
+    const status = byId("status").value;
+
     if (!name) { toast("Enter a vehicle name."); byId("name").focus(); return; }
-    if (!priceText) { toast("Enter a price per day."); byId("price").focus(); return; }
     if (!Number.isFinite(price) || price < 0) { toast("Enter a valid price per day."); byId("price").focus(); return; }
 
-    if (state.formState.vehicleId) {
-      const vehicle = state.data.vehicles.find((v) => v.id === state.formState.vehicleId);
-      if (vehicle) {
-        vehicle.name = name;
-        vehicle.type = type;
-        vehicle.pricePerDay = price;
-        vehicle.archived = byId("status").value === "archived";
-        vehicle.images = state.formImages;
+    try {
+      if (id) {
+        await updateVehicle(id, { name, type, price, status });
+        toast("Vehicle " + name + " saved.");
+      } else {
+        await createVehicle({ name, type, price, status });
+        toast("Vehicle " + name + " added.");
       }
-    } else {
-      const id = "v" + state.data.nextVehicleId++;
-      state.data.vehicles.push({
-        id, name, type, pricePerDay: price, images: state.formImages.slice(),
-        archived: byId("status").value === "archived", createdAt: todayStr(),
-      });
-    }
-    if (saveData(state.data)) {
-      toast("Vehicle " + name + " saved.");
       resetVehicleForm();
       renderAll();
+    } catch (err) {
+      toast(err.message);
     }
   });
 
   byId("cancel-btn").addEventListener("click", () => resetVehicleForm());
-
-  // Upload images
-  byId("upload-btn").addEventListener("click", () => byId("vehicle-image-input").click());
-  byId("vehicle-image-input").addEventListener("change", async (e) => {
-    const input = e.target;
-    const files = input.files;
-    if (!files || !files.length) return;
-    const urls = await readFilesAsDataURLs(files);
-    state.formImages.push(...urls);
-    input.value = "";
-    renderImagePreviews();
-    toast("Added " + urls.length + " image(s).");
-  });
-
-  function renderImagePreviews() {
-    const container = byId("image-previews");
-    container.innerHTML = "";
-    state.formImages.forEach((url, i) => {
-      const wrap = document.createElement("div");
-      wrap.className = "image-preview";
-      const img = document.createElement("img");
-      img.src = url;
-      img.alt = "Vehicle photo " + (i + 1);
-      wrap.appendChild(img);
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.className = "preview-remove";
-      remove.textContent = "✕";
-      remove.title = "Remove this image";
-      remove.addEventListener("click", () => {
-        state.formImages.splice(i, 1);
-        renderImagePreviews();
-      });
-      wrap.appendChild(remove);
-      container.appendChild(wrap);
-    });
-  }
 
   // ---------- Booking form ----------
   function setBookingDefaults() {
@@ -430,34 +491,76 @@
     byId("booking-end").value = addDays(todayStr(), 3);
   }
 
-  byId("booking-form").addEventListener("submit", (e) => {
+  byId("booking-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const vehicleId = byId("booking-vehicle").value;
     const start = byId("booking-start").value;
     const end = byId("booking-end").value;
-    const vehicle = state.data.vehicles.find((v) => v.id === vehicleId);
-    if (!vehicle) { toast("Choose a vehicle."); return; }
+
+    if (!vehicleId) { toast("Choose a vehicle."); return; }
+    if (!start || !end) { toast("Choose a start and return date."); return; }
+
     const startDate = parseDate(start), endDate = parseDate(end), today = parseDate(todayStr());
-    if (!startDate || !endDate) { toast("Choose a start and return date."); return; }
+    if (!startDate || !endDate) { toast("Invalid dates."); return; }
     if (endDate < today) { toast("The return date is in the past."); return; }
     if (startDate > endDate) { toast("The start date must be before the return date."); return; }
+
+    const vehicle = vehicles.find((v) => v.id === vehicleId);
     const isActiveBooking = !!today && startDate <= today && endDate >= today;
-    state.data.bookings.push({
-      id: "b" + state.data.nextBookingId++,
-      vehicleId: vehicle.id,
-      start, end,
-      status: isActiveBooking ? "active" : "upcoming",
-      createdAt: todayStr(),
-    });
-    if (saveData(state.data)) {
+
+    try {
+      await createBooking({
+        vehicle_id: parseInt(vehicleId, 10),
+        customer_name: "Walk-in customer",
+        start_date: start,
+        end_date: end,
+        status: isActiveBooking ? "active" : "upcoming",
+      });
       toast("Booking created for " + vehicle.name + ".");
       byId("booking-form").reset();
       setBookingDefaults();
       renderAll();
+    } catch (err) {
+      toast(err.message);
     }
   });
 
-  // ---------- Init ----------
-  renderAll();
+  // ---------- Invoice form ----------
+  function renderInvoiceBookingOptions() {
+    const select = byId("invoice-booking");
+    select.innerHTML = '<option value="">— Choose a booking —</option>';
+    bookings.forEach((b) => {
+      const vehicle = vehicles.find((v) => v.id === b.vehicle_id);
+      const o = document.createElement("option");
+      o.value = b.id;
+      o.textContent = "Booking #" + String(b.id).padStart(4, "0") + " — " + (vehicle ? vehicle.name : "Vehicle") + " (" + fmtDate(b.start_date) + " to " + fmtDate(b.end_date) + ")";
+      select.appendChild(o);
+    });
+  }
+
+  byId("invoice-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const booking_id = parseInt(byId("invoice-booking").value, 10);
+    const amount = parseFloat(byId("invoice-amount").value.trim());
+    const status = byId("invoice-status").value;
+    const due_date = byId("invoice-due").value;
+
+    if (!booking_id) { toast("Choose a booking."); return; }
+    if (!Number.isFinite(amount) || amount <= 0) { toast("Enter a valid amount."); byId("invoice-amount").focus(); return; }
+    if (!due_date) { toast("Choose a due date."); return; }
+
+    try {
+      await createInvoice({ booking_id, amount: Math.round(amount), status, due_date });
+      toast("Invoice created.");
+      byId("invoice-form").reset();
+      renderInvoiceBookingOptions();
+      renderAll();
+    } catch (err) {
+      toast(err.message);
+    }
+  });
+
+  // ---------- Boot ----------
+  init();
   setBookingDefaults();
 })();

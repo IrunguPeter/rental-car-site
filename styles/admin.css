@@ -72,6 +72,9 @@ img { display: block; max-width: 100%; height: auto; }
 .badge--available { background: var(--bg-alt); color: #2e8b4f; }
 .badge--upcoming { background: var(--accent-soft); color: #b56b00; }
 .badge--archived { background: var(--bg-alt); color: var(--muted); }
+.badge--settled { background: #e7f7ee; color: #2e8b4f; }
+.badge--pending { background: var(--accent-soft); color: #b56b00; }
+.badge--overdue { background: #fbeaea; color: #b34b3e; }
 .vehicle-price { font-size: .95rem; margin: 0; }
 .vehicle-note { font-size: .85rem; color: var(--text-soft); margin: 0; }
 .vehicle-actions { display: flex; gap: .5rem; margin-top: .2rem; }
@@ -92,6 +95,8 @@ img { display: block; max-width: 100%; height: auto; }
 .btn.small { padding: .35rem .8rem; font-size: .78rem; }
 .btn.danger { color: #b34b3e; }
 .btn.danger:hover { color: #9c4034; }
+.btn.settle { background: #2e8b4f; color: #fff; }
+.btn.settle:hover { background: #277a44; }
 
 /* Forms */
 .admin-form { display: flex; flex-direction: column; gap: 1.1rem; }

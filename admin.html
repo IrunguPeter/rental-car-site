@@ -29,6 +29,7 @@
       <h2>Add or edit a vehicle</h2>
       <p class="admin-sub">Upload photos, set the price per day and manage availability.</p>
       <form class="admin-form" id="vehicle-form">
+        <input type="hidden" id="vehicle-id" />
         <div class="form-grid">
           <label class="form-field">
             <span>Vehicle name</span>
@@ -111,6 +112,52 @@
       <h2>Utilization by vehicle type</h2>
       <p class="admin-sub">Fraction of each vehicle type currently rented.</p>
       <div class="utilization-list" id="utilization-list"></div>
+    </section>
+
+    <section class="admin-section" id="invoice-form-section">
+      <h2>Create Invoice</h2>
+      <p class="admin-sub">Generate an invoice for a booking.</p>
+      <form class="admin-form" id="invoice-form">
+        <div class="form-grid">
+          <label class="form-field">
+            <span>Booking</span>
+            <select name="booking" id="invoice-booking" required>
+              <option value="">— Choose a booking —</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Amount (KSh)</span>
+            <input type="number" name="amount" id="invoice-amount" min="0" step="1" required placeholder="12000" />
+          </label>
+          <label class="form-field">
+            <span>Status</span>
+            <select name="status" id="invoice-status">
+              <option value="pending">Pending</option>
+              <option value="settled">Settled</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Due date</span>
+            <input type="date" name="due_date" id="invoice-due" required />
+          </label>
+        </div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit">Create Invoice</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="admin-section" id="invoices-section">
+      <h2>Invoices</h2>
+      <p class="admin-sub">Track invoice settlement status.</p>
+      <table class="admin-table">
+        <thead>
+          <tr><th>Invoice #</th><th>Vehicle</th><th>Customer</th><th>Amount</th><th>Due</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="invoices-tbody"></tbody>
+      </table>
+      <p class="empty" id="invoices-empty" hidden>No invoices yet.</p>
     </section>
   </main>
 
