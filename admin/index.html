@@ -99,12 +99,14 @@
 
     <section class="admin-section" id="bookings-section">
       <h2>Bookings</h2>
-      <table class="admin-table">
-        <thead>
-          <tr><th>Vehicle</th><th>Period</th><th>Days</th><th>Status</th><th>Actions</th></tr>
-        </thead>
-        <tbody id="bookings-tbody"></tbody>
-      </table>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Vehicle</th><th>Period</th><th>Days</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="bookings-tbody"></tbody>
+        </table>
+      </div>
       <p class="empty" id="bookings-empty" hidden>No bookings recorded yet.</p>
     </section>
 
@@ -151,19 +153,21 @@
     <section class="admin-section" id="invoices-section">
       <h2>Invoices</h2>
       <p class="admin-sub">Track invoice settlement status.</p>
-      <table class="admin-table">
-        <thead>
-          <tr><th>Invoice #</th><th>Vehicle</th><th>Customer</th><th>Amount</th><th>Due</th><th>Status</th><th>Actions</th></tr>
-        </thead>
-        <tbody id="invoices-tbody"></tbody>
-      </table>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Invoice #</th><th>Vehicle</th><th>Customer</th><th>Amount</th><th>Due</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="invoices-tbody"></tbody>
+        </table>
+      </div>
       <p class="empty" id="invoices-empty" hidden>No invoices yet.</p>
     </section>
   </main>
 
   <footer class="admin-footer container">
     <span>Aurora Car Rental — Admin Dashboard</span>
-    <span><a href="index.html">Back to site</a></span>
+    <span><a href="../index.html">Back to site</a></span>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
