@@ -39,6 +39,59 @@ section { scroll-margin-top: 84px; }
 .btn-primary:hover { background: var(--orange-dark); box-shadow: 0 14px 28px rgba(255,112,67,.32); }
 .btn-ghost { color: var(--white); background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.35); }
 .btn-ghost:hover { background: rgba(255,255,255,.18); }
+
+/* WhatsApp icon */
+.wa-icon { width: 1.15em; height: 1.15em; flex: 0 0 auto; fill: currentColor; vertical-align: -.15em; }
+.header-whatsapp .wa-icon { width: 20px; height: 20px; }
+.mobile-booking-bar .wa-icon { width: 18px; height: 18px; }
+
+/* Hover / focus tooltips for buttons and action links */
+[data-tooltip] { position: relative; }
+[data-tooltip]::after,
+[data-tooltip]::before {
+  position: absolute;
+  z-index: 120;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .16s ease, transform .16s ease, visibility .16s;
+}
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  left: 50%;
+  bottom: calc(100% + 9px);
+  transform: translate(-50%, 4px);
+  padding: .42rem .7rem;
+  border-radius: 8px;
+  background: #0b1426;
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: .75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px rgba(8,17,34,.25);
+}
+[data-tooltip]::before {
+  content: "";
+  left: 50%;
+  bottom: calc(100% + 3px);
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #0b1426;
+}
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+[data-tooltip]:hover::before,
+[data-tooltip]:focus-visible::before { opacity: 1; visibility: visible; }
+[data-tooltip].tip-right::after { left: auto; right: 0; transform: translate(0, 4px); }
+[data-tooltip].tip-right::before { left: auto; right: 14px; transform: none; }
+[data-tooltip].tip-right:hover::after,
+[data-tooltip].tip-right:focus-visible::after { transform: translate(0, 0); }
+@media (hover: none) {
+  [data-tooltip]::after, [data-tooltip]::before { display: none; }
+}
+
 .section-title { font-size: clamp(2rem, 4vw, 3.25rem); }
 .section-sub { max-width: 620px; margin: .8rem auto 0; color: var(--slate); font-size: 1.02rem; }
 
