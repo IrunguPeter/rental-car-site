@@ -1,15 +1,15 @@
 import { Client } from 'pg';
-import { requireAdmin } from './_admin.js';
+import { noStore } from './_db.js';
+import { assertCsrf, logAudit, requireRole } from './_auth.js';
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Key');
+  noStore(res);
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  if (req.method === 'OPTIONS') return res.status(204).end();
+  if (req.method !== 'GET') {
+    if (!assertCsrf(req, res)) return;
+    if (!(await requireRole(req, res, ['admin']))) return;
   }
-  if (req.method !== 'GET' && !requireAdmin(req, res)) return;
 
   const { id } = req.query;
   const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL;
@@ -42,6 +42,7 @@ export default async function handler(req, res) {
         'INSERT INTO vehicles (name, type, price, status) VALUES ($1, $2, $3, $4) RETURNING id, name, type, price, status, created_at',
         [name, type, price, status]
       );
+      await logAudit(req, 'vehicle.created', 'vehicle', { id: result.rows[0].id, name });
       return res.status(201).json(result.rows[0]);
     }
 
@@ -59,12 +60,14 @@ export default async function handler(req, res) {
       values.push(id);
       const result = await client.query(`UPDATE vehicles SET ${fields.join(', ')} WHERE id = $${paramIdx} RETURNING id, name, type, price, status, created_at`, values);
       if (!result.rows.length) return res.status(404).json({ error: 'Vehicle not found' });
+      await logAudit(req, 'vehicle.updated', 'vehicle', { id: result.rows[0].id, fields: Object.keys(req.body || {}) });
       return res.status(200).json(result.rows[0]);
     }
 
     if (req.method === 'DELETE') {
       if (!id) return res.status(400).json({ error: 'Vehicle ID required' });
       await client.query('DELETE FROM vehicles WHERE id = $1', [id]);
+      await logAudit(req, 'vehicle.deleted', 'vehicle', { id });
       return res.status(200).json({ success: true });
     }
 

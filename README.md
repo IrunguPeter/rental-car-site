@@ -21,7 +21,26 @@ The admin page lets you:
 - **Utilization by vehicle type** — fraction of each vehicle type currently rented
 - **At a glance stats** — total vehicles, rented now, available, upcoming, booked days, utilization
 
-Vehicle, booking, invoice and enquiry data is stored in the configured Postgres database. The admin interface is at `/admin/`; protect it with deployment authentication before using it in production.
+Vehicle, booking, invoice and enquiry data is stored in the configured Postgres database. The admin interface is at `/admin/` and requires a staff sign-in.
+
+### Roles
+
+- **Admin** — full access: vehicles, bookings, invoices, team accounts, role changes, password resets and the activity log.
+- **Worker** — can sign in, view the fleet and bookings, and create or cancel bookings for customers. Vehicle, invoice and team management are hidden.
+
+### Authentication
+
+Sessions are server-side, stored as SHA-256 hashes in `admin_sessions`, and sent to the browser in an HttpOnly, SameSite=Strict cookie. Passwords are hashed with scrypt. Login attempts are rate limited per account and per IP, with a 30-minute lockout after repeated failures. Mutations require a same-origin custom header.
+
+Set `SITE_URL` to the exact public origin (for example `https://rental-car-site-eta.vercel.app`). `ADMIN_SESSION_HOURS` optionally controls session lifetime (1–168 hours, default 8).
+
+### Create or reset staff accounts
+
+```bash
+node scripts/create-admin.mjs <email> <password> <admin|worker> "Full Name"
+```
+
+Admins can also create accounts, change roles, disable accounts and reset passwords from the **Team accounts** section of the dashboard.
 
 ## Run locally
 

@@ -1,15 +1,13 @@
 import { Client } from 'pg';
-import { requireAdmin } from './_admin.js';
+import { noStore } from './_db.js';
+import { assertCsrf, logAudit, requireRole } from './_auth.js';
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Key');
+  noStore(res);
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  if (!requireAdmin(req, res)) return;
+  if (req.method === 'OPTIONS') return res.status(204).end();
+  if (req.method !== 'GET' && !assertCsrf(req, res)) return;
+  if (!(await requireRole(req, res, ['admin', 'worker']))) return;
 
   const { id } = req.query;
   const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL;
@@ -75,12 +73,14 @@ export default async function handler(req, res) {
         'INSERT INTO bookings (vehicle_id, customer_name, customer_phone, customer_email, start_date, end_date, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, vehicle_id, customer_name, customer_phone, customer_email, start_date, end_date, status, created_at',
         [vehicle_id, customer_name, customer_phone, customer_email, start_date, end_date, status]
       );
+      await logAudit(req, 'booking.created', 'booking', { id: result.rows[0].id, vehicle_id, customer_name });
       return res.status(201).json(result.rows[0]);
     }
 
     if (req.method === 'DELETE') {
       if (!id) return res.status(400).json({ error: 'Booking ID required' });
       await client.query('DELETE FROM bookings WHERE id = $1', [id]);
+      await logAudit(req, 'booking.deleted', 'booking', { id });
       return res.status(200).json({ success: true });
     }
 
