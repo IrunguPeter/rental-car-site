@@ -9,29 +9,20 @@
   let vehicles = [];
   let bookings = [];
   let invoices = [];
-
-  function adminKey() {
-    return sessionStorage.getItem("aurora_admin_key") || "";
-  }
-
-  function requestAdminKey() {
-    const key = window.prompt("Enter the Aurora admin API key:");
-    if (key) sessionStorage.setItem("aurora_admin_key", key);
-    return key || "";
-  }
+  let currentUser = null;
 
   // ---------- API helpers ----------
   async function api(path, opts = {}) {
-    const headers = { "Content-Type": "application/json", ...opts.headers };
-    const key = adminKey();
-    if (key) headers["X-Admin-Key"] = key;
-    let res = await fetch(API + path, { headers, ...opts });
-    if (res.status === 401 && !key) {
-      const newKey = requestAdminKey();
-      if (newKey) {
-        headers["X-Admin-Key"] = newKey;
-        res = await fetch(API + path, { headers, ...opts });
-      }
+    const headers = {
+      "Content-Type": "application/json",
+      "X-Requested-With": "XMLHttpRequest",
+      ...opts.headers,
+    };
+    const res = await fetch(API + path, { ...opts, headers, credentials: "include", cache: "no-store" });
+
+    if (res.status === 401) {
+      showLogin("Your session has ended. Please sign in again.");
+      throw new Error("Authentication required");
     }
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -39,6 +30,42 @@
     }
     if (res.status === 204) return null;
     return res.json();
+  }
+
+  // ---------- Authentication ----------
+  function showLogin(message) {
+    currentUser = null;
+    byId("admin-app").hidden = true;
+    byId("auth-screen").hidden = false;
+    const error = byId("login-error");
+    error.textContent = message || "";
+    error.hidden = !message;
+    byId("login-password").value = "";
+  }
+
+  function showApp(user) {
+    currentUser = user;
+    byId("auth-screen").hidden = true;
+    byId("admin-app").hidden = false;
+    byId("account-label").textContent = (user.name || user.email) + " · " + (user.role === "admin" ? "Admin" : "Worker");
+
+    const isAdmin = user.role === "admin";
+    document.querySelectorAll(".admin-only").forEach((el) => { el.hidden = !isAdmin; });
+
+    if (isAdmin) {
+      loadUsers();
+      loadActivity();
+    }
+  }
+
+  async function boot() {
+    try {
+      const session = await api("/auth/me");
+      showApp(session.user);
+      await init();
+    } catch (err) {
+      if (!currentUser) showLogin("");
+    }
   }
 
   async function loadVehicles() {
@@ -118,6 +145,107 @@
     invoices = invoices.filter((x) => x.id !== id);
   }
 
+  // ---------- Team & activity ----------
+  async function loadUsers() {
+    try {
+      const data = await api("/admin/users");
+      renderUsers(data.users || []);
+    } catch (err) {
+      toast(err.message);
+    }
+  }
+
+  async function loadActivity() {
+    try {
+      const data = await api("/admin/activity");
+      renderActivity(data.events || []);
+    } catch (err) {
+      toast(err.message);
+    }
+  }
+
+  function renderUsers(users) {
+    const tbody = byId("users-tbody");
+    const empty = byId("users-empty");
+    tbody.innerHTML = "";
+    empty.hidden = users.length > 0;
+
+    users.forEach((user) => {
+      const row = document.createElement("tr");
+
+      const name = document.createElement("td");
+      name.textContent = user.full_name || "—";
+      row.appendChild(name);
+
+      const email = document.createElement("td");
+      email.textContent = user.email;
+      row.appendChild(email);
+
+      const role = document.createElement("td");
+      const badge = document.createElement("span");
+      badge.className = "badge badge--" + (user.role === "admin" ? "available" : "upcoming");
+      badge.textContent = user.role === "admin" ? "Admin" : "Worker";
+      role.appendChild(badge);
+      row.appendChild(role);
+
+      const lastLogin = document.createElement("td");
+      lastLogin.textContent = user.last_login_at ? fmtStamp(user.last_login_at) : "Never";
+      row.appendChild(lastLogin);
+
+      const access = document.createElement("td");
+      access.textContent = user.is_active
+        ? "Active" + (user.active_sessions ? " · " + user.active_sessions + " session" + (user.active_sessions > 1 ? "s" : "") : "")
+        : "Disabled";
+      row.appendChild(access);
+
+      const actions = document.createElement("td");
+      const resetBtn = document.createElement("button");
+      resetBtn.className = "btn small edit";
+      resetBtn.textContent = "Reset password";
+      resetBtn.title = "Set a new password for this user";
+      resetBtn.addEventListener("click", () => resetUserPassword(user));
+      actions.appendChild(resetBtn);
+
+      const roleBtn = document.createElement("button");
+      roleBtn.className = "btn small archive";
+      roleBtn.textContent = user.role === "admin" ? "Make worker" : "Make admin";
+      roleBtn.title = "Change this user's role";
+      roleBtn.addEventListener("click", () => changeUserRole(user));
+      actions.appendChild(roleBtn);
+
+      const toggleBtn = document.createElement("button");
+      toggleBtn.className = "btn small danger";
+      toggleBtn.textContent = user.is_active ? "Disable" : "Enable";
+      toggleBtn.title = user.is_active ? "Disable this account" : "Enable this account";
+      toggleBtn.addEventListener("click", () => toggleUserActive(user));
+      actions.appendChild(toggleBtn);
+
+      row.appendChild(actions);
+      tbody.appendChild(row);
+    });
+  }
+
+  function renderActivity(events) {
+    const tbody = byId("activity-tbody");
+    const empty = byId("activity-empty");
+    tbody.innerHTML = "";
+    empty.hidden = events.length > 0;
+
+    events.forEach((event) => {
+      const row = document.createElement("tr");
+      const when = document.createElement("td");
+      when.textContent = fmtStamp(event.created_at);
+      const who = document.createElement("td");
+      who.textContent = event.actor_email || "System";
+      const action = document.createElement("td");
+      action.textContent = event.action;
+      const details = document.createElement("td");
+      details.textContent = event.entity + (event.details && Object.keys(event.details).length ? " · " + JSON.stringify(event.details) : "");
+      row.append(when, who, action, details);
+      tbody.appendChild(row);
+    });
+  }
+
   // ---------- Date helpers ----------
   function toISOLocal(d) {
     return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
@@ -132,6 +260,11 @@
     const d = parseDate(s);
     if (!d) return String(s);
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+  function fmtStamp(s) {
+    const d = new Date(s);
+    if (isNaN(d)) return String(s || "—");
+    return d.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
   }
   function daysBetween(start, end) {
     const a = parseDate(start), b = parseDate(end);
@@ -331,6 +464,7 @@
       const row = document.createElement("tr");
       const cells = [
         vehicle ? vehicle.name : "Vehicle #" + b.vehicle_id,
+        b.customer_name || "—",
         fmtDate(b.start_date) + " – " + fmtDate(b.end_date),
         daysBetween(b.start_date, b.end_date) + " days",
         bookingDisplayStatus(b),
@@ -454,6 +588,44 @@
     renderInvoices();
   }
 
+  async function resetUserPassword(user) {
+    const password = window.prompt("New temporary password for " + (user.full_name || user.email) + " (at least 12 characters):");
+    if (!password) return;
+    if (password.length < 12) { toast("Use at least 12 characters."); return; }
+    try {
+      await api("/admin/users/password", { method: "POST", body: JSON.stringify({ user_id: user.id, new_password: password }) });
+      toast("Password updated. " + (user.full_name || user.email) + " must sign in again.");
+      loadActivity();
+    } catch (err) {
+      toast(err.message);
+    }
+  }
+
+  async function changeUserRole(user) {
+    const role = user.role === "admin" ? "worker" : "admin";
+    if (!confirm("Make " + (user.full_name || user.email) + " a " + role + "?")) return;
+    try {
+      await api("/admin/users?id=" + user.id, { method: "PUT", body: JSON.stringify({ role }) });
+      toast("Role updated.");
+      loadUsers();
+      loadActivity();
+    } catch (err) {
+      toast(err.message);
+    }
+  }
+
+  async function toggleUserActive(user) {
+    if (!confirm((user.is_active ? "Disable" : "Enable") + " access for " + (user.full_name || user.email) + "?")) return;
+    try {
+      await api("/admin/users?id=" + user.id, { method: "PUT", body: JSON.stringify({ is_active: !user.is_active }) });
+      toast(user.is_active ? "Account disabled." : "Account enabled.");
+      loadUsers();
+      loadActivity();
+    } catch (err) {
+      toast(err.message);
+    }
+  }
+
   // ---------- State & init ----------
   let initialized = false;
   async function init() {
@@ -517,10 +689,12 @@
   byId("booking-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const vehicleId = byId("booking-vehicle").value;
+    const customer = byId("booking-customer").value.trim();
     const start = byId("booking-start").value;
     const end = byId("booking-end").value;
 
     if (!vehicleId) { toast("Choose a vehicle."); return; }
+    if (customer.length < 2) { toast("Enter the customer's name."); byId("booking-customer").focus(); return; }
     if (!start || !end) { toast("Choose a start and return date."); return; }
 
     const startDate = parseDate(start), endDate = parseDate(end), today = parseDate(todayStr());
@@ -534,7 +708,7 @@
     try {
       await createBooking({
         vehicle_id: parseInt(vehicleId, 10),
-        customer_name: "Walk-in customer",
+        customer_name: customer,
         start_date: start,
         end_date: end,
         status: isActiveBooking ? "active" : "upcoming",
@@ -583,7 +757,114 @@
     }
   });
 
+  // ---------- Sign in / sign out ----------
+  byId("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = byId("login-email").value.trim();
+    const password = byId("login-password").value;
+    const error = byId("login-error");
+    error.hidden = true;
+    error.textContent = "";
+    const submit = byId("login-submit");
+    submit.disabled = true;
+    submit.textContent = "Signing in…";
+
+    try {
+      const res = await fetch(API + "/auth/login", {
+        method: "POST",
+        credentials: "include",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        error.textContent = data.error || "Sign in failed. Please try again.";
+        error.hidden = false;
+        return;
+      }
+      byId("login-password").value = "";
+      showApp(data.user);
+      await init();
+    } catch (err) {
+      error.textContent = "Could not reach the server. Check your connection.";
+      error.hidden = false;
+    } finally {
+      submit.disabled = false;
+      submit.textContent = "Sign in";
+    }
+  });
+
+  byId("logout-btn").addEventListener("click", async () => {
+    try {
+      await fetch(API + "/auth/logout", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
+      });
+    } catch (err) {
+      console.error(err);
+    }
+    vehicles = [];
+    bookings = [];
+    invoices = [];
+    initialized = false;
+    byId("password-section").hidden = true;
+    showLogin("");
+  });
+
+  byId("change-password-btn").addEventListener("click", () => {
+    const section = byId("password-section");
+    section.hidden = !section.hidden;
+    if (!section.hidden) section.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+  byId("password-cancel").addEventListener("click", () => {
+    byId("password-section").hidden = true;
+    byId("password-form").reset();
+  });
+
+  byId("password-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const current = byId("current-password").value;
+    const next = byId("new-password").value;
+    const confirm = byId("confirm-password").value;
+    if (next.length < 12) { toast("Use at least 12 characters."); return; }
+    if (next !== confirm) { toast("The new passwords do not match."); return; }
+    try {
+      await api("/auth/change-password", {
+        method: "POST",
+        body: JSON.stringify({ current_password: current, new_password: next }),
+      });
+      byId("password-form").reset();
+      byId("password-section").hidden = true;
+      toast("Password updated.");
+    } catch (err) {
+      toast(err.message);
+    }
+  });
+
+  byId("user-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = byId("user-email").value.trim();
+    const fullName = byId("user-name").value.trim();
+    const role = byId("user-role").value;
+    const password = byId("user-password").value;
+    if (password.length < 12) { toast("Use at least 12 characters for the temporary password."); return; }
+    try {
+      await api("/admin/users", {
+        method: "POST",
+        body: JSON.stringify({ email, full_name: fullName, role, password }),
+      });
+      byId("user-form").reset();
+      toast("Account created.");
+      loadUsers();
+      loadActivity();
+    } catch (err) {
+      toast(err.message);
+    }
+  });
+
   // ---------- Boot ----------
-  init();
   setBookingDefaults();
+  boot();
 })();

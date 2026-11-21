@@ -3,172 +3,287 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aurora Admin — Dashboard</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Aurora Admin — Staff sign in</title>
   <link rel="icon" href="../assets/favicon.svg" />
   <link rel="stylesheet" href="../styles/admin.css" />
 </head>
 <body>
-  <header class="admin-header container">
-    <h1>Admin <span class="admin-accent">Dashboard</span></h1>
-    <a class="admin-back" href="../index.html">Back to site</a>
-  </header>
+  <!-- Sign-in gate: no dashboard data is rendered until the API confirms a session -->
+  <div class="auth-screen" id="auth-screen">
+    <form class="auth-card" id="login-form" novalidate>
+      <div class="auth-brand">Aurora <span>Car Rental</span></div>
+      <h1>Staff sign in</h1>
+      <p class="auth-sub">Authorized team members only.</p>
 
-  <main class="admin-main container">
-    <section class="admin-section" id="stats-section">
-      <h2>At a glance</h2>
-      <div class="stats" id="stats-grid"></div>
-    </section>
+      <label class="form-field">
+        <span>Email address</span>
+        <input type="email" id="login-email" name="email" autocomplete="username" inputmode="email" required placeholder="you@auroracarrental.co.ke" />
+      </label>
+      <label class="form-field">
+        <span>Password</span>
+        <input type="password" id="login-password" name="password" autocomplete="current-password" required placeholder="Your password" />
+      </label>
 
-    <section class="admin-section" id="vehicles-section">
-      <h2>Vehicle status</h2>
-      <p class="admin-sub">Which vehicles are rented right now and which are available.</p>
-      <div class="vehicle-grid" id="vehicle-grid"></div>
-    </section>
+      <p class="auth-error" id="login-error" role="alert" hidden></p>
+      <button class="btn primary auth-submit" type="submit" id="login-submit">Sign in</button>
+      <p class="auth-footnote">Need access? Ask an administrator to create your account.</p>
+    </form>
+  </div>
 
-    <section class="admin-section" id="form-section">
-      <h2>Add or edit a vehicle</h2>
-      <p class="admin-sub">Upload photos, set the price per day and manage availability.</p>
-      <form class="admin-form" id="vehicle-form">
-        <input type="hidden" id="vehicle-id" />
-        <div class="form-grid">
-          <label class="form-field">
-            <span>Vehicle name</span>
-            <input type="text" name="name" id="name" required placeholder="SUV X100" />
-          </label>
-          <label class="form-field">
-            <span>Type</span>
-            <select name="type" id="type">
-              <option value="Economy">Economy</option>
-              <option value="Midsize">Midsize</option>
-              <option value="SUV">SUV</option>
-              <option value="Luxury">Luxury</option>
-              <option value="Minivan">Minivan</option>
-            </select>
-          </label>
-          <label class="form-field">
-            <span>Price per day (KSh)</span>
-            <input type="number" name="price" id="price" min="0" step="0.01" required placeholder="59" />
-          </label>
-          <label class="form-field">
-            <span>Status</span>
-            <select name="status" id="status">
-              <option value="available">Available</option>
-              <option value="archived">Archived</option>
-            </select>
-          </label>
-        </div>
-        <div class="form-field full">
-          <span>Vehicle photos (optional)</span>
-          <div class="image-previews" id="image-previews"></div>
-          <button type="button" class="upload-btn" id="upload-btn" title="Upload vehicle photos">Upload photos</button>
-          <input type="file" accept="image/*" multiple id="vehicle-image-input" hidden />
-          <p class="upload-hint">Vehicle and booking data is saved to the cloud database. Photo uploads are not yet stored.</p>
-        </div>
-        <div class="form-actions">
-          <button class="btn primary" type="submit" id="save-btn" title="Save this vehicle to the database">Add Vehicle</button>
-          <button class="btn ghost" type="button" id="cancel-btn" hidden title="Discard changes and clear the form">Cancel edit</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="admin-section" id="booking-section">
-      <h2>Book a vehicle</h2>
-      <p class="admin-sub">Record rentals for the fleet.</p>
-      <form class="admin-form" id="booking-form">
-        <div class="form-grid">
-          <label class="form-field">
-            <span>Vehicle</span>
-            <select name="vehicle" id="booking-vehicle">
-              <option value="">— Choose a vehicle —</option>
-            </select>
-          </label>
-          <label class="form-field">
-            <span>Start date</span>
-            <input type="date" name="start" id="booking-start" required />
-          </label>
-          <label class="form-field">
-            <span>Return date</span>
-            <input type="date" name="end" id="booking-end" required />
-          </label>
-        </div>
-        <div class="form-actions">
-          <button class="btn primary" type="submit" title="Save a new booking">Create booking</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="admin-section" id="bookings-section">
-      <h2>Bookings</h2>
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr><th>Vehicle</th><th>Period</th><th>Days</th><th>Status</th><th>Actions</th></tr>
-          </thead>
-          <tbody id="bookings-tbody"></tbody>
-        </table>
+  <div id="admin-app" hidden>
+    <header class="admin-header container">
+      <h1>Admin <span class="admin-accent">Dashboard</span></h1>
+      <div class="admin-header-actions">
+        <span class="account-label" id="account-label"></span>
+        <button class="btn ghost small" type="button" id="change-password-btn" title="Change your password">Password</button>
+        <button class="btn ghost small" type="button" id="logout-btn" title="Sign out of this account">Sign out</button>
+        <a class="admin-back" href="../index.html">Back to site</a>
       </div>
-      <p class="empty" id="bookings-empty" hidden>No bookings recorded yet.</p>
-    </section>
+    </header>
 
-    <section class="admin-section" id="utilization-section">
-      <h2>Utilization by vehicle type</h2>
-      <p class="admin-sub">Fraction of each vehicle type currently rented.</p>
-      <div class="utilization-list" id="utilization-list"></div>
-    </section>
+    <main class="admin-main container">
+      <section class="admin-section" id="stats-section">
+        <h2>At a glance</h2>
+        <div class="stats" id="stats-grid"></div>
+      </section>
 
-    <section class="admin-section" id="invoice-form-section">
-      <h2>Create Invoice</h2>
-      <p class="admin-sub">Generate an invoice for a booking.</p>
-      <form class="admin-form" id="invoice-form">
-        <div class="form-grid">
-          <label class="form-field">
-            <span>Booking</span>
-            <select name="booking" id="invoice-booking" required>
-              <option value="">— Choose a booking —</option>
-            </select>
-          </label>
-          <label class="form-field">
-            <span>Amount (KSh)</span>
-            <input type="number" name="amount" id="invoice-amount" min="0" step="1" required placeholder="12000" />
-          </label>
-          <label class="form-field">
-            <span>Status</span>
-            <select name="status" id="invoice-status">
-              <option value="pending">Pending</option>
-              <option value="settled">Settled</option>
-              <option value="overdue">Overdue</option>
-            </select>
-          </label>
-          <label class="form-field">
-            <span>Due date</span>
-            <input type="date" name="due_date" id="invoice-due" required />
-          </label>
+      <section class="admin-section" id="vehicles-section">
+        <h2>Vehicle status</h2>
+        <p class="admin-sub">Which vehicles are rented right now and which are available.</p>
+        <div class="vehicle-grid" id="vehicle-grid"></div>
+      </section>
+
+      <section class="admin-section admin-only" id="form-section">
+        <h2>Add or edit a vehicle</h2>
+        <p class="admin-sub">Upload photos, set the price per day and manage availability.</p>
+        <form class="admin-form" id="vehicle-form">
+          <input type="hidden" id="vehicle-id" />
+          <div class="form-grid">
+            <label class="form-field">
+              <span>Vehicle name</span>
+              <input type="text" name="name" id="name" required placeholder="SUV X100" />
+            </label>
+            <label class="form-field">
+              <span>Type</span>
+              <select name="type" id="type">
+                <option value="Economy">Economy</option>
+                <option value="Midsize">Midsize</option>
+                <option value="SUV">SUV</option>
+                <option value="Luxury">Luxury</option>
+                <option value="Minivan">Minivan</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Price per day (KSh)</span>
+              <input type="number" name="price" id="price" min="0" step="0.01" required placeholder="59" />
+            </label>
+            <label class="form-field">
+              <span>Status</span>
+              <select name="status" id="status">
+                <option value="available">Available</option>
+                <option value="archived">Archived</option>
+              </select>
+            </label>
+          </div>
+          <div class="form-field full">
+            <span>Vehicle photos (optional)</span>
+            <div class="image-previews" id="image-previews"></div>
+            <button type="button" class="upload-btn" id="upload-btn" title="Upload vehicle photos">Upload photos</button>
+            <input type="file" accept="image/*" multiple id="vehicle-image-input" hidden />
+            <p class="upload-hint">Vehicle and booking data is saved to the cloud database. Photo uploads are not yet stored.</p>
+          </div>
+          <div class="form-actions">
+            <button class="btn primary" type="submit" id="save-btn" title="Save this vehicle to the database">Add Vehicle</button>
+            <button class="btn ghost" type="button" id="cancel-btn" hidden title="Discard changes and clear the form">Cancel edit</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="admin-section" id="booking-section">
+        <h2>Book a vehicle</h2>
+        <p class="admin-sub">Record rentals for customers. Every booking is attributed to you in the activity log.</p>
+        <form class="admin-form" id="booking-form">
+          <div class="form-grid">
+            <label class="form-field">
+              <span>Vehicle</span>
+              <select name="vehicle" id="booking-vehicle">
+                <option value="">— Choose a vehicle —</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Customer name</span>
+              <input type="text" name="customer" id="booking-customer" required placeholder="Full name" autocomplete="off" />
+            </label>
+            <label class="form-field">
+              <span>Start date</span>
+              <input type="date" name="start" id="booking-start" required />
+            </label>
+            <label class="form-field">
+              <span>Return date</span>
+              <input type="date" name="end" id="booking-end" required />
+            </label>
+          </div>
+          <div class="form-actions">
+            <button class="btn primary" type="submit" title="Save a new booking">Create booking</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="admin-section" id="bookings-section">
+        <h2>Bookings</h2>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Vehicle</th><th>Customer</th><th>Period</th><th>Days</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="bookings-tbody"></tbody>
+          </table>
         </div>
-        <div class="form-actions">
-          <button class="btn primary" type="submit" title="Save a new invoice">Create Invoice</button>
+        <p class="empty" id="bookings-empty" hidden>No bookings recorded yet.</p>
+      </section>
+
+      <section class="admin-section" id="utilization-section">
+        <h2>Utilization by vehicle type</h2>
+        <p class="admin-sub">Fraction of each vehicle type currently rented.</p>
+        <div class="utilization-list" id="utilization-list"></div>
+      </section>
+
+      <section class="admin-section admin-only" id="invoice-form-section">
+        <h2>Create Invoice</h2>
+        <p class="admin-sub">Generate an invoice for a booking.</p>
+        <form class="admin-form" id="invoice-form">
+          <div class="form-grid">
+            <label class="form-field">
+              <span>Booking</span>
+              <select name="booking" id="invoice-booking" required>
+                <option value="">— Choose a booking —</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Amount (KSh)</span>
+              <input type="number" name="amount" id="invoice-amount" min="0" step="1" required placeholder="12000" />
+            </label>
+            <label class="form-field">
+              <span>Status</span>
+              <select name="status" id="invoice-status">
+                <option value="pending">Pending</option>
+                <option value="settled">Settled</option>
+                <option value="overdue">Overdue</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Due date</span>
+              <input type="date" name="due_date" id="invoice-due" required />
+            </label>
+          </div>
+          <div class="form-actions">
+            <button class="btn primary" type="submit" title="Save a new invoice">Create Invoice</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="admin-section admin-only" id="invoices-section">
+        <h2>Invoices</h2>
+        <p class="admin-sub">Track invoice settlement status.</p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Invoice #</th><th>Vehicle</th><th>Customer</th><th>Amount</th><th>Due</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="invoices-tbody"></tbody>
+          </table>
         </div>
-      </form>
-    </section>
+        <p class="empty" id="invoices-empty" hidden>No invoices yet.</p>
+      </section>
 
-    <section class="admin-section" id="invoices-section">
-      <h2>Invoices</h2>
-      <p class="admin-sub">Track invoice settlement status.</p>
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr><th>Invoice #</th><th>Vehicle</th><th>Customer</th><th>Amount</th><th>Due</th><th>Status</th><th>Actions</th></tr>
-          </thead>
-          <tbody id="invoices-tbody"></tbody>
-        </table>
-      </div>
-      <p class="empty" id="invoices-empty" hidden>No invoices yet.</p>
-    </section>
-  </main>
+      <section class="admin-section" id="password-section" hidden>
+        <h2>Change your password</h2>
+        <p class="admin-sub">Use at least 12 characters. You will stay signed in here; other devices will be signed out.</p>
+        <form class="admin-form" id="password-form">
+          <div class="form-grid">
+            <label class="form-field">
+              <span>Current password</span>
+              <input type="password" id="current-password" autocomplete="current-password" required />
+            </label>
+            <label class="form-field">
+              <span>New password</span>
+              <input type="password" id="new-password" autocomplete="new-password" minlength="12" required />
+            </label>
+            <label class="form-field">
+              <span>Confirm new password</span>
+              <input type="password" id="confirm-password" autocomplete="new-password" minlength="12" required />
+            </label>
+          </div>
+          <div class="form-actions">
+            <button class="btn primary" type="submit">Update password</button>
+            <button class="btn ghost" type="button" id="password-cancel">Cancel</button>
+          </div>
+        </form>
+      </section>
 
-  <footer class="admin-footer container">
-    <span>Aurora Car Rental — Admin Dashboard</span>
-    <span><a href="../index.html">Back to site</a></span>
-  </footer>
+      <section class="admin-section admin-only" id="team-section" hidden>
+        <h2>Team accounts</h2>
+        <p class="admin-sub">Admins manage everything. Workers can book vehicles and view the fleet and bookings.</p>
+
+        <form class="admin-form" id="user-form">
+          <div class="form-grid">
+            <label class="form-field">
+              <span>Full name</span>
+              <input type="text" id="user-name" placeholder="e.g. Mary Wanjiku" />
+            </label>
+            <label class="form-field">
+              <span>Email address</span>
+              <input type="email" id="user-email" required placeholder="name@auroracarrental.co.ke" />
+            </label>
+            <label class="form-field">
+              <span>Role</span>
+              <select id="user-role">
+                <option value="worker">Worker</option>
+                <option value="admin">Admin</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Temporary password</span>
+              <input type="text" id="user-password" required minlength="12" placeholder="At least 12 characters" autocomplete="off" />
+            </label>
+          </div>
+          <div class="form-actions">
+            <button class="btn primary" type="submit">Create account</button>
+          </div>
+        </form>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Name</th><th>Email</th><th>Role</th><th>Last login</th><th>Access</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+        <p class="empty" id="users-empty" hidden>No team accounts yet.</p>
+      </section>
+
+      <section class="admin-section admin-only" id="activity-section" hidden>
+        <h2>Team activity</h2>
+        <p class="admin-sub">Recent sign-ins and changes made by your team.</p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>When</th><th>Who</th><th>Action</th><th>Details</th></tr>
+            </thead>
+            <tbody id="activity-tbody"></tbody>
+          </table>
+        </div>
+        <p class="empty" id="activity-empty" hidden>No activity recorded yet.</p>
+      </section>
+    </main>
+
+    <footer class="admin-footer container">
+      <span>Aurora Car Rental — Staff Dashboard</span>
+      <span><a href="../index.html">Back to site</a></span>
+    </footer>
+  </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="../scripts/admin.js"></script>
