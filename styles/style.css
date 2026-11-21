@@ -57,6 +57,7 @@ section { scroll-margin-top: 84px; }
 .phone-link { color: rgba(255,255,255,.86); font-size: .85rem; font-weight: 700; white-space: nowrap; }
 .site-header.scrolled .phone-link { color: var(--ink); }
 .header-whatsapp { width: 40px; min-height: 40px; padding: 0; border-radius: 50%; }
+.whatsapp-icon { width: 20px; height: 20px; fill: currentColor; }
 .hamburger { display: none; padding: .45rem; color: currentColor; background: none; border: 0; font-size: 1.5rem; cursor: pointer; }
 .mobile-nav { display: none; }
 
