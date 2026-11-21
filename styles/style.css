@@ -199,7 +199,7 @@ section { scroll-margin-top: 72px; }
 
 /* Fleet */
 .fleet { padding: 3rem 0 2rem; }
-.fleet-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.fleet-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1rem; }
 .car-card {
   display: flex; flex-direction: column; gap: 0.75rem;
   border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card);
