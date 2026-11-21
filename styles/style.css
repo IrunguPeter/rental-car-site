@@ -187,7 +187,7 @@ section { scroll-margin-top: 72px; }
 
 /* Features */
 .features { background: var(--bg-alt); padding: 3rem 0; }
-.features-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.features-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1rem; }
 .feature-card {
   display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem;
   padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-lg);
@@ -240,7 +240,7 @@ section { scroll-margin-top: 72px; }
 
 /* Services */
 .services { background: var(--bg-alt); padding: 3rem 0; }
-.services-grid { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
+.services-grid { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 1rem; }
 .service-card {
   display: flex; flex-direction: column; gap: 0.75rem; padding: 1.25rem;
   border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card);
