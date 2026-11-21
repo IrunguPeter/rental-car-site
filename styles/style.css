@@ -84,7 +84,7 @@ section { scroll-margin-top: 72px; }
 .btn-ghost:hover { background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.7); }
 
 /* Header */
-.site-header { position: sticky; top: 0; left: 0; right: 0; z-index: 50; color: #fff; }
+.site-header { position: sticky; top: 0; left: 0; right: 0; z-index: 50; color: #fff; background: rgba(10, 16, 36, 0.95); }
 .site-header.scrolled {
   background: rgba(255, 255, 255, 0.985);
   backdrop-filter: saturate(180%) blur(10px);
