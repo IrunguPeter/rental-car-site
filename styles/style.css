@@ -107,10 +107,24 @@ section { scroll-margin-top: 72px; }
 .nav-link:hover { color: var(--accent); }
 .site-header.scrolled .nav-link { color: var(--text-soft); }
 .site-header.scrolled .nav-link:hover { color: var(--accent); }
-.header-actions { display: none; align-items: center; gap: 0.5rem; }
-.phone-link { display: none; font-weight: 600; color: rgba(255, 255, 255, 0.85); font-size: 0.85rem; text-decoration: none; white-space: nowrap; }
+.header-actions { display: flex; align-items: center; gap: 0.5rem; }
+.phone-link { display: block; font-weight: 600; color: rgba(255, 255, 255, 0.85); font-size: 0.85rem; text-decoration: none; white-space: nowrap; }
 .phone-link:hover { color: var(--accent); }
 .site-header.scrolled .phone-link { color: var(--text); }
+.header-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 1.1rem;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.header-whatsapp:hover { background: rgba(255,255,255,0.25); }
 .hamburger { display: flex; background: none; border: none; color: rgba(255, 255, 255, 0.9); font-size: 1.5rem; cursor: pointer; padding: 0.4rem; line-height: 1; }
 .site-header.scrolled .hamburger { color: var(--text); }
 
@@ -311,46 +325,6 @@ section { scroll-margin-top: 72px; }
 .footer-bottom { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.82rem; color: var(--text-soft); text-align: center; }
 .footer-bottom a { color: var(--text-soft); }
 .footer-bottom a:hover { color: var(--text); }
-
-/* Top Call CTA */
-.top-cta {
-  background: var(--accent);
-  color: #fff;
-  padding: 1rem 0;
-  text-align: center;
-}
-.top-cta-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
-.top-cta-label {
-  color: rgba(255,255,255,0.9);
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.top-cta-phone {
-  color: #fff;
-  font-size: 1.25rem;
-  font-weight: 700;
-  text-decoration: none;
-}
-.top-cta-phone:hover { text-decoration: underline; }
-.top-cta-whatsapp {
-  background: rgba(255,255,255,0.2);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.4);
-  padding: 0.6rem 1rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-.top-cta-whatsapp:hover { background: rgba(255,255,255,0.3); }
 
 /* Toast */
 .toast {
