@@ -3,6 +3,13 @@
 
   const byId = (id) => document.getElementById(id);
 
+  function updateWhatsAppLinks(message) {
+    const url = "https://wa.me/254722461400?text=" + encodeURIComponent(message);
+    document.querySelectorAll('a[href^="https://wa.me/254722461400"]').forEach((link) => {
+      link.href = url;
+    });
+  }
+
   // Toast
   function toast(message) {
     document.querySelectorAll(".toast").forEach((t) => t.remove());
@@ -92,6 +99,8 @@
       const match = document.querySelector('.car-card[data-card="' + carType + '"]');
       document.querySelectorAll(".car-card").forEach((c) => c.classList.remove("selected"));
       if (match) match.classList.add("selected");
+      const selectedLabel = match ? match.querySelector("h3")?.textContent : "a car";
+      updateWhatsAppLinks("Hi Aurora, I’d like to check availability for " + selectedLabel + " from " + pickup + " to " + ret + " in " + location + ".");
       toast("Searching " + carType + " cars — pick your dates and rent.");
       if (match) match.scrollIntoView({ behavior: "smooth", block: "center" });
     });
@@ -104,6 +113,7 @@
       const car = link.getAttribute("data-car") || "";
       const price = link.getAttribute("data-price") || "";
       const message = "I’d like to rent the " + car + " (" + price + "/day) in Nairobi. Please share availability and booking steps.";
+      updateWhatsAppLinks(message);
       const textarea = byId("contact-message");
       if (textarea) {
         textarea.value = message;

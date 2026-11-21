@@ -31,6 +31,10 @@ python3 -m http.server 8000
 # open http://localhost:8000/ (main site) and http://localhost:8000/admin/ (admin dashboard)
 ```
 
+## Production configuration
+
+Set `DATABASE_URL` (or `POSTGRES_URL`) for the Postgres connection. Set `ADMIN_API_KEY` in the deployment environment to protect booking, invoice and vehicle write operations; the admin dashboard will request the key once and keep it in session storage for that browser tab. Set `SITE_URL` to the exact public origin so enquiry CORS responses are restricted to the live site.
+
 ## Images
 
 Car photos were planned as generated assets, but the image tool returned "Invalid credential" errors in this session, so the site uses clean gradient placeholders with car emoji (economy 🚗, midsize 🚘, SUV 🚙, luxury 🚕, minivan 🚐, hero 🚘). Replace the `card-img` / `hero-car` / `about-img` placeholder blocks with `<img>` tags to add real photos.
