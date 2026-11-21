@@ -49,6 +49,24 @@ export default async function handler(req, res) {
       if (!vehicle_id || !customer_name || !start_date || !end_date) {
         return res.status(400).json({ error: 'vehicle_id, customer_name, start_date, and end_date are required' });
       }
+      if (new Date(end_date) <= new Date(start_date)) {
+        return res.status(400).json({ error: 'end_date must be after start_date' });
+      }
+      const vehicle = await client.query('SELECT id FROM vehicles WHERE id = $1 AND status <> $2', [vehicle_id, 'archived']);
+      if (!vehicle.rows.length) return res.status(404).json({ error: 'Vehicle not found or archived' });
+
+      const overlap = await client.query(
+        `SELECT id FROM bookings
+         WHERE vehicle_id = $1
+           AND status NOT IN ('cancelled', 'completed')
+           AND start_date < $3
+           AND end_date > $2
+         LIMIT 1`,
+        [vehicle_id, start_date, end_date]
+      );
+      if (overlap.rows.length) {
+        return res.status(409).json({ error: 'Vehicle is already booked for part of those dates' });
+      }
       const result = await client.query(
         'INSERT INTO bookings (vehicle_id, customer_name, start_date, end_date, status) VALUES ($1, $2, $3, $4, $5) RETURNING id, vehicle_id, customer_name, start_date, end_date, status, created_at',
         [vehicle_id, customer_name, start_date, end_date, status]

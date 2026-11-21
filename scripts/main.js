@@ -79,6 +79,11 @@
         (pickup ? byId("return") : byId("pickup")).focus();
         return;
       }
+      if (new Date(ret) <= new Date(pickup)) {
+        toast("Your return date must be after your pickup date.");
+        byId("return").focus();
+        return;
+      }
       if (!location) {
         toast("Choose a pickup location.");
         byId("location").focus();
@@ -116,12 +121,37 @@
     contactForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(contactForm));
-      if (!data.name || !data.message) {
-        status.textContent = "Please fill in your name and message.";
+      if (data.website) return;
+      if (!data.name || !data.phone || !data.message) {
+        status.textContent = "Please fill in your name, phone number and message.";
         return;
       }
-      status.textContent = "Thanks, " + data.name + "! Our team will reply within 24 hours.";
-      contactForm.reset();
+      const submit = contactForm.querySelector('button[type="submit"]');
+      if (submit) submit.disabled = true;
+      status.textContent = "Sending your enquiry…";
+
+      fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.name.trim(),
+          phone: data.phone.trim(),
+          email: data.email.trim(),
+          message: data.message.trim()
+        })
+      })
+        .then(async (response) => {
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(result.error || "Unable to send enquiry");
+          status.textContent = "Thanks, " + data.name + "! We’ll contact you shortly on WhatsApp or phone.";
+          contactForm.reset();
+        })
+        .catch((error) => {
+          status.textContent = error.message + ". Please use WhatsApp for a faster reply.";
+        })
+        .finally(() => {
+          if (submit) submit.disabled = false;
+        });
     });
   }
 })();

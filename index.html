@@ -5,9 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Aurora Car Rental Nairobi — Rent a Car in Kenya, Pick Up Today</title>
   <meta name="description" content="Aurora Car Rental offers flexible car rentals in Nairobi, Kenya. From economy to 4x4. Book online, pick up at JKIA, Wilson Airport or anywhere in Nairobi. Transparent KSh pricing, free cancellation." />
+  <link rel="canonical" href="https://auroracarrental.co.ke/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Aurora Car Rental Nairobi" />
+  <meta property="og:description" content="Clean, flexible car rentals in Nairobi from KSh 2,500 per day. Pickup at JKIA, Wilson Airport, Westlands and more." />
+  <meta property="og:url" content="https://auroracarrental.co.ke/" />
+  <meta name="twitter:card" content="summary" />
   <link rel="icon" href="assets/favicon.svg" />
   <link rel="stylesheet" href="styles/style.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CarRental",
+    "name": "Aurora Car Rental Nairobi",
+    "url": "https://auroracarrental.co.ke/",
+    "telephone": "+254722461400",
+    "priceRange": "KSh 2,500–KSh 12,000 per day",
+    "areaServed": "Nairobi, Kenya",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Mukuru Lane, Westlands",
+      "addressLocality": "Nairobi",
+      "addressCountry": "KE"
+    }
+  }
+  </script>
 </head>
 <body>
 
@@ -402,10 +425,22 @@
                 <span>Your name</span>
                 <input type="text" name="name" id="contact-name" placeholder="Ada Lovelace" required />
               </label>
+              <label class="form-field">
+                <span>Phone or WhatsApp</span>
+                <input type="tel" name="phone" id="contact-phone" placeholder="+254 7xx xxx xxx" required />
+              </label>
             </div>
+            <label class="form-field">
+              <span>Email (optional)</span>
+              <input type="email" name="email" id="contact-email" placeholder="you@example.com" />
+            </label>
             <label class="form-field">
               <span>Message</span>
               <textarea class="form-field-textarea" name="message" id="contact-message" rows="4" required placeholder="Tell us about your trip — dates, pickup location, vehicle type..."></textarea>
+            </label>
+            <label class="form-field" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
+              <span>Website</span>
+              <input type="text" name="website" tabindex="-1" autocomplete="off" />
             </label>
             <div class="form-actions">
               <button class="btn btn-primary" type="submit">Send Message</button>
@@ -444,17 +479,11 @@
             Aurora <span class="logo-accent">Car Rental Nairobi</span>
           </a>
           <p class="footer-tagline">Flexible rentals, made simple.</p>
-          <ul class="social">
-            <li><a href="#facebook" aria-label="Facebook">F</a></li>
-            <li><a href="#instagram" aria-label="Instagram">IG</a></li>
-            <li><a href="#x" aria-label="X">X</a></li>
-          </ul>
         </div>
         <div class="footer-col">
           <h4>Company</h4>
           <ul class="footer-links">
             <li><a href="#about">About Us</a></li>
-            <li><a href="admin/">Admin Dashboard</a></li>
             <li><a href="#fleet">Fleet</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>

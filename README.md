@@ -5,12 +5,13 @@ Static website for the fictional rental car company **Aurora Car Rental** — he
 ## Structure
 
 - `index.html` — the main site (single page)
-- `admin.html` — the admin dashboard (see below)
+- `admin/index.html` — the admin dashboard (see below)
+- `api/leads.js` — validates and stores customer enquiries in Postgres
 - `styles/style.css`, `styles/admin.css` — site + admin styles (Space Grotesk + Inter from Google Fonts, fall back to system fonts)
 - `scripts/main.js`, `scripts/admin.js` — site + admin behavior
 - `assets/favicon.svg` — favicon
 
-## Admin dashboard (`admin.html`)
+## Admin dashboard (`admin/index.html`)
 
 The admin page lets you:
 
@@ -20,14 +21,14 @@ The admin page lets you:
 - **Utilization by vehicle type** — fraction of each vehicle type currently rented
 - **At a glance stats** — total vehicles, rented now, available, upcoming, booked days, utilization
 
-All admin data lives in `localStorage` under `aurora_admin_data` (seeded with 5 vehicles and 3 bookings), so the admin page works entirely offline in the browser — no backend or server needed.
+Vehicle, booking, invoice and enquiry data is stored in the configured Postgres database. The admin interface is at `/admin/`; protect it with deployment authentication before using it in production.
 
 ## Run locally
 
 ```bash
 cd /home/peter/projects/rental-car-site
 python3 -m http.server 8000
-# open http://localhost:8000/ (main site) and http://localhost:8000/admin.html (admin dashboard)
+# open http://localhost:8000/ (main site) and http://localhost:8000/admin/ (admin dashboard)
 ```
 
 ## Images
