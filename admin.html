@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aurora Admin — Dashboard</title>
+  <link rel="icon" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="styles/admin.css" />
+</head>
+<body>
+  <header class="admin-header container">
+    <h1>Admin <span class="admin-accent">Dashboard</span></h1>
+    <a class="admin-back" href="index.html">Back to site</a>
+  </header>
+
+  <main class="admin-main container">
+    <section class="admin-section" id="stats-section">
+      <h2>At a glance</h2>
+      <div class="stats" id="stats-grid"></div>
+    </section>
+
+    <section class="admin-section" id="vehicles-section">
+      <h2>Vehicle status</h2>
+      <p class="admin-sub">Which vehicles are rented right now and which are available.</p>
+      <div class="vehicle-grid" id="vehicle-grid"></div>
+    </section>
+
+    <section class="admin-section" id="form-section">
+      <h2>Add or edit a vehicle</h2>
+      <p class="admin-sub">Upload photos, set the price per day and manage availability.</p>
+      <form class="admin-form" id="vehicle-form">
+        <div class="form-grid">
+          <label class="form-field">
+            <span>Vehicle name</span>
+            <input type="text" name="name" id="name" required placeholder="SUV X100" />
+          </label>
+          <label class="form-field">
+            <span>Type</span>
+            <select name="type" id="type">
+              <option value="Economy">Economy</option>
+              <option value="Midsize">Midsize</option>
+              <option value="SUV">SUV</option>
+              <option value="Luxury">Luxury</option>
+              <option value="Minivan">Minivan</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Price per day ($)</span>
+            <input type="number" name="price" id="price" min="0" step="0.01" required placeholder="59" />
+          </label>
+          <label class="form-field">
+            <span>Status</span>
+            <select name="status" id="status">
+              <option value="available">Available</option>
+              <option value="archived">Archived</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-field full">
+          <span>Vehicle photos (optional)</span>
+          <div class="image-previews" id="image-previews"></div>
+          <button type="button" class="upload-btn" id="upload-btn">Upload photos</button>
+          <input type="file" accept="image/*" multiple id="vehicle-image-input" hidden />
+          <p class="upload-hint">Photos are stored in this browser's local storage — no server needed.</p>
+        </div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit" id="save-btn">Add Vehicle</button>
+          <button class="btn ghost" type="button" id="cancel-btn" hidden>Cancel edit</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="admin-section" id="booking-section">
+      <h2>Book a vehicle</h2>
+      <p class="admin-sub">Record rentals for the fleet.</p>
+      <form class="admin-form" id="booking-form">
+        <div class="form-grid">
+          <label class="form-field">
+            <span>Vehicle</span>
+            <select name="vehicle" id="booking-vehicle">
+              <option value="">— Choose a vehicle —</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Start date</span>
+            <input type="date" name="start" id="booking-start" required />
+          </label>
+          <label class="form-field">
+            <span>Return date</span>
+            <input type="date" name="end" id="booking-end" required />
+          </label>
+        </div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit">Create booking</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="admin-section" id="bookings-section">
+      <h2>Bookings</h2>
+      <table class="admin-table">
+        <thead>
+          <tr><th>Vehicle</th><th>Period</th><th>Days</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="bookings-tbody"></tbody>
+      </table>
+      <p class="empty" id="bookings-empty" hidden>No bookings recorded yet.</p>
+    </section>
+
+    <section class="admin-section" id="utilization-section">
+      <h2>Utilization by vehicle type</h2>
+      <p class="admin-sub">Fraction of each vehicle type currently rented.</p>
+      <div class="utilization-list" id="utilization-list"></div>
+    </section>
+  </main>
+
+  <footer class="admin-footer container">
+    <span>Aurora Car Rental — Admin Dashboard</span>
+    <span><a href="index.html">Back to site</a></span>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="scripts/admin.js"></script>
+</body>
+</html>

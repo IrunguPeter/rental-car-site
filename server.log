@@ -1,0 +1,12 @@
+127.0.0.1 - - [20/Nov/2026 20:29:24] code 404, message File not found
+127.0.0.1 - - [20/Nov/2026 20:29:24] "GET /health HTTP/1.1" 404 -
+127.0.0.1 - - [20/Nov/2026 20:29:28] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [20/Nov/2026 20:29:28] "GET /admin.html HTTP/1.1" 200 -
+127.0.0.1 - - [20/Nov/2026 20:29:41] "GET /index.html HTTP/1.1" 304 -
+127.0.0.1 - - [20/Nov/2026 20:29:41] "GET /styles/style.css HTTP/1.1" 304 -
+127.0.0.1 - - [20/Nov/2026 20:29:54] code 404, message File not found
+127.0.0.1 - - [20/Nov/2026 20:29:54] "GET /health HTTP/1.1" 404 -
+127.0.0.1 - - [20/Nov/2026 20:30:24] code 404, message File not found
+127.0.0.1 - - [20/Nov/2026 20:30:24] "GET /health HTTP/1.1" 404 -
+127.0.0.1 - - [20/Nov/2026 20:30:54] code 404, message File not found
+127.0.0.1 - - [20/Nov/2026 20:30:54] "GET /health HTTP/1.1" 404 -

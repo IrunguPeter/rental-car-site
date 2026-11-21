@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aurora Car Rental Nairobi — Rent a Car in Kenya, Pick Up Today</title>
+  <meta name="description" content="Aurora Car Rental offers flexible car rentals in Nairobi, Kenya. From economy to 4x4. Book online, pick up at JKIA, Wilson Airport or anywhere in Nairobi. Transparent KSh pricing, free cancellation." />
+  <link rel="icon" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="styles/style.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner container">
+      <a class="logo" href="./">
+        <svg class="logo-mark" aria-hidden="true" viewBox="0 0 32 32" width="28" height="28">
+          <path fill="currentColor" d="M6 12v8.5l3.6-3.1a1.5 1.5 0 0 1 1.8.2L13 21.5h4l2.6-3.9a1.5 1.5 0 0 1 1.8-.2L25 20.5V12z"/>
+          <circle cx="8.5" cy="22.5" r="1.8" fill="#ff7a45"/>
+          <circle cx="23.5" cy="22.5" r="1.8" fill="#ff7a45"/>
+          <path fill="#fff" d="M10.5 15a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm11 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+        </svg>
+        Aurora <span class="logo-accent">Car Rental Nairobi</span>
+      </a>
+
+      <nav class="nav" aria-label="Main navigation">
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#fleet">Fleet</a></li>
+          <li><a class="nav-link" href="#services">Services</a></li>
+          <li><a class="nav-link" href="#about">About</a></li>
+          <li><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <a class="phone-link" href="tel:+254722461400" title="Call Aurora Car Rental Nairobi">+254 722 461 400</a>
+        <a class="btn btn-primary" href="#contact">Book Now</a>
+        <button class="hamburger" id="hamburger" type="button" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+      </div>
+
+      <nav class="mobile-nav" id="mobile-nav" aria-hidden="true">
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#fleet">Fleet</a></li>
+          <li><a class="nav-link" href="#services">Services</a></li>
+          <li><a class="nav-link" href="#about">About</a></li>
+          <li><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-car" aria-hidden="true"><span class="hero-car-glyph">🚘</span></div>
+    </div>
+    <div class="hero-inner container">
+      <div class="hero-content">
+        <p class="eyebrow">Car Rental in Nairobi, Kenya</p>
+        <h1 class="hero-title">Drive away in style.<br>Choose your ride.</h1>
+        <p class="hero-sub">Flexible bookings across Nairobi — from economy to 4x4. Pick up at JKIA, Wilson Airport, Westlands or your door. Transparent KSh pricing.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#fleet">Search Cars</a>
+          <a class="btn btn-ghost" href="https://wa.me/254722461400">Book now via WhatsApp</a>
+        </div>
+        <div class="hero-form" id="hero-form">
+          <h2>Find your perfect car</h2>
+          <p class="form-note">Dates, location and car type — we'll point you to available rentals.</p>
+          <form class="search-form" id="search-form" novalidate>
+            <div class="form-grid">
+              <label class="form-field">
+                <span>Pick-up location</span>
+                <select name="location" id="location">
+                  <option value="">— Choose a location —</option>
+                  <option value="jkia">JKIA Airport</option>
+                  <option value="wilson">Wilson Airport</option>
+                  <option value="westlands">Westlands</option>
+                  <option value="cbd">Nairobi CBD</option>
+                  <option value="karen">Karen</option>
+                  <option value="eastleigh">Eastleigh</option>
+                </select>
+              </label>
+              <label class="form-field">
+                <span>Car type</span>
+                <select name="carType" id="carType">
+                  <option value="">— Any —</option>
+                  <option value="economy">Economy</option>
+                  <option value="midsize">Midsize</option>
+                  <option value="suv">SUV</option>
+                  <option value="luxury">Luxury</option>
+                  <option value="minivan">Minivan</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-grid">
+              <label class="form-field">
+                <span>Pick-up date</span>
+                <input type="date" name="pickup" id="pickup" placeholder="MM/DD/YYYY" />
+              </label>
+              <label class="form-field">
+                <span>Return date</span>
+                <input type="date" name="return-date" id="return" placeholder="MM/DD/YYYY" />
+              </label>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit">Search Cars</button>
+            </div>
+          </form>
+          <p class="form-note">Hassle-free pickup · Free cancellation · Unlimited miles</p>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <!-- hero car img is rendered by .hero-bg -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Why rent with Aurora -->
+  <section class="features" id="features">
+    <div class="container">
+      <h2 class="section-title">Why rent with Aurora</h2>
+      <p class="section-sub">Everything you need — from booking to driving away.</p>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon">&#8734;</div>
+          <h3>Unlimited mileage</h3>
+          <p>Drive as far as your trip takes you — no extra fees, no mileage caps, ever.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">&#8634;</div>
+          <h3>Free cancellation</h3>
+          <p>Change your plans? Cancel or modify your reservation up to 24 hours before pick-up, at no cost.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">🛠</div>
+          <h3>24/7 Roadside assistance</h3>
+          <p>If something goes wrong, help is on the way — anytime, day or night.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">🛡</div>
+          <h3>Insurance options</h3>
+          <p>Choose from liability coverage, collision waivers and full protection when you book.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">📍</div>
+          <h3>Pick-up at any location</h3>
+          <p>We meet you at airports, train stations and hotels — or we can pick up at your door.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">💬</div>
+          <h3>Support from real humans</h3>
+          <p>Chat, phone or email — our team is ready with answers, any hour of the day.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fleet -->
+  <section class="fleet" id="fleet">
+    <div class="container">
+      <h2 class="section-title">Our Fleet</h2>
+      <p class="section-sub">Every car is inspected, cleaned and ready for you. Choose your style — from economy to luxury.</p>
+      <div class="fleet-grid" id="fleet-grid">
+
+        <article class="car-card reveal" data-card="economy">
+          <div class="card-head">
+            <span class="card-tag">Nairobi city runs</span>
+            <h3>Toyota Vitz</h3>
+          </div>
+          <div class="card-img card-img--economy" aria-hidden="true"><span class="car-glyph">🚗</span></div>
+          <div class="card-body">
+            <p class="card-price">KSh 2,500 <span class="card-price-unit">/ day</span></p>
+            <ul class="card-features">
+              <li>Air conditioning &amp; heating</li>
+              <li>Centre armrest with cup holder</li>
+              <li>Split-folding rear seat</li>
+              <li>Two key fobs</li>
+              <li>Free fuel policy</li>
+            </ul>
+          </div>
+          <div class="card-details">
+            <div class="card-details-specs">
+              <div class="spec"><span class="spec-label">Passengers</span><strong>4</strong></div>
+              <div class="spec"><span class="spec-label">Luggage</span><strong>3 bags</strong></div>
+              <div class="spec"><span class="spec-label">Transmission</span><strong>Automatic</strong></div>
+              <div class="spec"><span class="spec-label">Mileage</span><strong>Unlimited</strong></div>
+              <div class="spec"><span class="spec-label">Seat positions</span><strong>2</strong></div>
+            </div>
+            <p class="card-details-text">A fuel-efficient pick for Nairobi city runs, quick errands and everyday commutes. Easy to park and great on fuel.</p>
+          </div>
+          <div class="card-actions">
+            <button class="card-toggle" type="button">Details ▼</button>
+            <a class="card-rent btn btn-primary" href="#contact">Rent This Car</a>
+          </div>
+        </article>
+
+        <article class="car-card reveal" data-card="midsize">
+          <div class="card-head">
+            <span class="card-tag">Cruising comfort</span>
+            <h3>Nissan Tiida</h3>
+          </div>
+          <div class="card-img card-img--midsize" aria-hidden="true"><span class="car-glyph">🚘</span></div>
+          <div class="card-body">
+            <p class="card-price">KSh 3,800 <span class="card-price-unit">/ day</span></p>
+            <ul class="card-features">
+              <li>More roomy cabin and trunk</li>
+              <li>Automatic transmission</li>
+              <li>Sunroof</li>
+              <li>Bluetooth audio with USB ports</li>
+              <li>Free fuel policy</li>
+            </ul>
+          </div>
+          <div class="card-details">
+            <div class="card-details-specs">
+              <div class="spec"><span class="spec-label">Passengers</span><strong>5</strong></div>
+              <div class="spec"><span class="spec-label">Luggage</span><strong>4 bags</strong></div>
+              <div class="spec"><span class="spec-label">Transmission</span><strong>Automatic</strong></div>
+              <div class="spec"><span class="spec-label">Mileage</span><strong>Unlimited</strong></div>
+              <div class="spec"><span class="spec-label">Seat positions</span><strong>4</strong></div>
+            </div>
+            <p class="card-details-text">A solid choice for couples, friends or small families traveling together — plenty of passenger room and a trunk that holds your gear without a struggle.</p>
+          </div>
+          <div class="card-actions">
+            <button class="card-toggle" type="button">Details ▼</button>
+            <a class="card-rent btn btn-primary" href="#contact">Rent This Car</a>
+          </div>
+        </article>
+
+        <article class="car-card reveal" data-card="suv">
+          <div class="card-head">
+            <span class="card-tag">Upcountry and safari ready</span>
+            <h3>Toyota RAV4</h3>
+          </div>
+          <div class="card-img card-img--suv" aria-hidden="true"><span class="car-glyph">🚙</span></div>
+          <div class="card-body">
+            <p class="card-price">KSh 7,500 <span class="card-price-unit">/ day</span></p>
+            <ul class="card-features">
+              <li>High clearance, off-road capable</li>
+              <li>Roof rails with cargo boxes</li>
+              <li>Terrain assist mode</li>
+              <li>More cargo room than a sedan</li>
+              <li>Free fuel policy</li>
+            </ul>
+          </div>
+          <div class="card-details">
+            <div class="card-details-specs">
+              <div class="spec"><span class="spec-label">Passengers</span><strong>5</strong></div>
+              <div class="spec"><span class="spec-label">Luggage</span><strong>6 bags</strong></div>
+              <div class="spec"><span class="spec-label">Transmission</span><strong>Automatic</strong></div>
+              <div class="spec"><span class="spec-label">Mileage</span><strong>Unlimited</strong></div>
+              <div class="spec"><span class="spec-label">Seat positions</span><strong>4</strong></div>
+            </div>
+            <p class="card-details-text">Taller ride height and bigger wheels handle rougher roads with ease, and the extra cargo room means every bag and cooler fits. Great for family trips and mountain getaways.</p>
+          </div>
+          <div class="card-actions">
+            <button class="card-toggle" type="button">Details ▼</button>
+            <a class="card-rent btn btn-primary" href="#contact">Rent This Car</a>
+          </div>
+        </article>
+
+        <article class="car-card reveal" data-card="luxury">
+          <div class="card-head">
+            <span class="card-tag">Premium ride</span>
+            <h3>Toyota Prado</h3>
+          </div>
+          <div class="card-img card-img--luxury" aria-hidden="true"><span class="car-glyph">🚕</span></div>
+          <div class="card-body">
+            <p class="card-price">KSh 12,000 <span class="card-price-unit">/ day</span></p>
+            <ul class="card-features">
+              <li>Premium semi-aniline leather seats</li>
+              <li>Premium sound system</li>
+              <li>Driver assistance features</li>
+              <li>Tinted privacy glass</li>
+              <li>Automatic climate control</li>
+            </ul>
+          </div>
+          <div class="card-details">
+            <div class="card-details-specs">
+              <div class="spec"><span class="spec-label">Passengers</span><strong>4</strong></div>
+              <div class="spec"><span class="spec-label">Luggage</span><strong>5 bags</strong></div>
+              <div class="spec"><span class="spec-label">Transmission</span><strong>Automatic</strong></div>
+              <div class="spec"><span class="spec-label">Mileage</span><strong>Unlimited</strong></div>
+              <div class="spec"><span class="spec-label">Seat positions</span><strong>4</strong></div>
+            </div>
+            <p class="card-details-text">A premium interior, refined materials and a suite of comfort features designed to make every mile of your trip feel effortless and smooth.</p>
+          </div>
+          <div class="card-actions">
+            <button class="card-toggle" type="button">Details ▼</button>
+            <a class="card-rent btn btn-primary" href="#contact">Rent This Car</a>
+          </div>
+        </article>
+
+        <article class="car-card reveal" data-card="minivan">
+          <div class="card-head">
+            <span class="card-tag">Family and group travel</span>
+            <h3>Toyota Hiace</h3>
+          </div>
+          <div class="card-img card-img--minivan" aria-hidden="true"><span class="car-glyph">🚐</span></div>
+          <div class="card-body">
+            <p class="card-price">KSh 8,500 <span class="card-price-unit">/ day</span></p>
+            <ul class="card-features">
+              <li>Seats up to 7 passengers</li>
+              <li>Sliding side doors for easy loading</li>
+              <li>ISOFIX child seat anchors</li>
+              <li>Sunroof &amp; USB charging ports</li>
+              <li>Free fuel policy</li>
+            </ul>
+          </div>
+          <div class="card-details">
+            <div class="card-details-specs">
+              <div class="spec"><span class="spec-label">Passengers</span><strong>7</strong></div>
+              <div class="spec"><span class="spec-label">Luggage</span><strong>8 bags</strong></div>
+              <div class="spec"><span class="spec-label">Transmission</span><strong>Automatic</strong></div>
+              <div class="spec"><span class="spec-label">Mileage</span><strong>Unlimited</strong></div>
+              <div class="spec"><span class="spec-label">Seat positions</span><strong>7</strong></div>
+            </div>
+            <p class="card-details-text">The roomy family option — plenty of seating, a flat load floor for groceries and gear, and sliding doors that make loading with a loaded stroller simple.</p>
+          </div>
+          <div class="card-actions">
+            <button class="card-toggle" type="button">Details ▼</button>
+            <a class="card-rent btn btn-primary" href="#contact">Rent This Car</a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="services" id="services">
+    <div class="container">
+      <h2 class="section-title">Your peace of mind, included</h2>
+      <p class="section-sub">Everything you need on your rental — no extra add-ons unless you want them.</p>
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <div class="service-mark">∞</div>
+          <h3>Unlimited mileage</h3>
+          <p>Drive as far as your trip takes you. No extra fees, no mileage caps, ever.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-mark">&#8634;</div>
+          <h3>Free cancellation</h3>
+          <p>Change your plans. Cancel or modify your reservation up to 24 hours before pick-up at no cost.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-mark">🛠</div>
+          <h3>24/7 Roadside assistance</h3>
+          <p>If something goes wrong, help is on the way — anytime, day or night.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-mark">🛡</div>
+          <h3>Insurance options</h3>
+          <p>Liability coverage, collision waivers and full protection — pick what fits your trip.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-mark">📍</div>
+          <h3>Pick-up at any location</h3>
+          <p>Airports, train stations, hotels — or your own door. We meet you wherever it makes sense.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-mark">💬</div>
+          <h3>Support from real humans</h3>
+          <p>Chat, phone or email — our team is ready with answers, any hour of the day.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text">
+          <h2>Renting reimagined for real trips</h2>
+          <p>Aurora was built for travelers who want flexibility — flexible bookings, transparent pricing and cars that meet you wherever you are. We care about every mile of your trip, not just the first one.</p>
+          <ul class="check-list">
+            <li>Over 6,000 cars across 120+ locations — pick up at the airport, train station, hotel or your own door.</li>
+            <li>Transparent pricing — no hidden fees, no surprise surcharges.</li>
+            <li>Every car is a set of 1,000+ inspections a year — kept clean, ready and on schedule.</li>
+            <li>Chat, phone or email — real people ready to help, any hour of the day.</li>
+          </ul>
+        </div>
+        <div class="about-img" aria-hidden="true"><span class="car-glyph">🚙</span></div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Contact -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-form-col">
+          <h2>Get in touch</h2>
+          <form class="contact-form" id="contact-form" novalidate>
+            <div class="form-grid">
+              <label class="form-field">
+                <span>Your name</span>
+                <input type="text" name="name" id="contact-name" placeholder="Ada Lovelace" required />
+              </label>
+            </div>
+            <label class="form-field">
+              <span>Message</span>
+              <textarea class="form-field-textarea" name="message" id="contact-message" rows="4" required placeholder="Tell us about your trip — dates, pickup location, vehicle type..."></textarea>
+            </label>
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit">Send Message</button>
+            </div>
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <div class="contact-info">
+          <div class="contact-card">
+            <span class="contact-icon">📍</span>
+            <h3>Our locations</h3>
+            <p>
+              Mukuru Lane, Westlands, Nairobi<br />
+              Phone: +254 722 461 400<br />
+              Hours: 8 AM – 6 PM
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col logo-col">
+          <a class="logo" href="./">
+            <svg class="logo-mark" aria-hidden="true" viewBox="0 0 32 32" width="26" height="26">
+              <path fill="currentColor" d="M6 12v8.5l3.6-3.1a1.5 1.5 0 0 1 1.8.2L13 21.5h4l2.6-3.9a1.5 1.5 0 0 1 1.8-.2L25 20.5V12z"/>
+              <circle cx="8.5" cy="22.5" r="1.8" fill="#ff7a45"/>
+              <circle cx="23.5" cy="22.5" r="1.8" fill="#ff7a45"/>
+            </svg>
+            Aurora <span class="logo-accent">Car Rental Nairobi</span>
+          </a>
+          <p class="footer-tagline">Flexible rentals, made simple.</p>
+          <ul class="social">
+            <li><a href="#facebook" aria-label="Facebook">F</a></li>
+            <li><a href="#instagram" aria-label="Instagram">IG</a></li>
+            <li><a href="#x" aria-label="X">X</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul class="footer-links">
+            <li><a href="#about">About Us</a></li>
+            <li><a href="admin.html">Admin Dashboard</a></li>
+            <li><a href="#fleet">Fleet</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Rental Services</h4>
+          <ul class="footer-links">
+            <li><a href="#services">Unlimited Mileage</a></li>
+            <li><a href="#services">Free Cancellation</a></li>
+            <li><a href="#services">Roadside Assistance</a></li>
+            <li><a href="#services">Insurance Options</a></li>
+            <li><a href="#services">Pick-up at Anywhere</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul class="footer-links">
+            <li><a href="tel:+254722461400">+254 722 461 400</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Aurora Car Rental Nairobi — All rights reserved.</span>
+        <span>
+          <a href="#">Privacy Policy</a> ·
+          <a href="#">Terms of Service</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="scripts/main.js"></script>
+</body>
+</html>
