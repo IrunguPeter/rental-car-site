@@ -92,6 +92,23 @@
     });
   }
 
+  // Rent This Car -> prefill contact form
+  document.querySelectorAll(".card-rent").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const car = link.getAttribute("data-car") || "";
+      const price = link.getAttribute("data-price") || "";
+      const message = "I’d like to rent the " + car + " (" + price + "/day) in Nairobi. Please share availability and booking steps.";
+      const textarea = byId("contact-message");
+      if (textarea) {
+        textarea.value = message;
+        textarea.focus();
+      }
+      const contact = byId("contact");
+      if (contact) contact.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  });
+
   // Contact form
   const contactForm = byId("contact-form");
   const status = byId("form-status");
@@ -99,8 +116,8 @@
     contactForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(contactForm));
-      if (!data.name || !data.email || !data.message) {
-        status.textContent = "Please fill in your name, email and message.";
+      if (!data.name || !data.message) {
+        status.textContent = "Please fill in your name and message.";
         return;
       }
       status.textContent = "Thanks, " + data.name + "! Our team will reply within 24 hours.";
