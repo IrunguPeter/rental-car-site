@@ -311,6 +311,26 @@ section { scroll-margin-top: 88px; }
 }
 .contact-card p { color: #1f2937; }
 
+/* Hero search form contrast (dark text on light bg) */
+.hero-form { background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .4); }
+.hero-form .form-field span { color: #e2e8f0; font-weight: 600; }
+.hero-form .form-field input,
+.hero-form .form-field select,
+.hero-form .form-field textarea {
+  background: #ffffff;
+  color: #111724;
+  border: 1px solid #cbd5e1;
+}
+.hero-form .form-field input::placeholder,
+.hero-form .form-field textarea::placeholder { color: #64748b; }
+.hero-form .form-field input:focus,
+.hero-form .form-field select:focus,
+.hero-form .form-field textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
 /* Footer */
 .site-footer { border-top: 1px solid var(--border); background: var(--bg-alt); padding: 3.5rem 0 2.25rem; }
 .footer-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 2rem; }
