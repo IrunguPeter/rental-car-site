@@ -269,14 +269,17 @@
     const editBtn = document.createElement("button");
     editBtn.className = "btn small edit";
     editBtn.textContent = "Edit";
+    editBtn.title = "Edit this vehicle";
     editBtn.addEventListener("click", () => editVehicle(v));
     const archiveBtn = document.createElement("button");
     archiveBtn.className = "btn small archive";
     archiveBtn.textContent = v.status === "archived" ? "Restore" : "Archive";
+    archiveBtn.title = v.status === "archived" ? "Restore this vehicle" : "Archive this vehicle";
     archiveBtn.addEventListener("click", () => archiveVehicle(v));
     const delBtn = document.createElement("button");
     delBtn.className = "btn small danger";
     delBtn.textContent = "Delete";
+    delBtn.title = "Delete this vehicle";
     delBtn.addEventListener("click", () => deleteVehicleConfirm(v));
     actions.append(editBtn, archiveBtn, delBtn);
 
@@ -341,6 +344,7 @@
       const cancelBtn = document.createElement("button");
       cancelBtn.className = "btn small danger";
       cancelBtn.textContent = "Cancel";
+      cancelBtn.title = "Cancel this booking";
       cancelBtn.addEventListener("click", () => cancelBooking(b));
       actions.appendChild(cancelBtn);
       row.appendChild(actions);
@@ -391,6 +395,7 @@
       const settleBtn = document.createElement("button");
       settleBtn.className = "btn small settle";
       settleBtn.textContent = inv.status === 'settled' ? 'Unsettle' : 'Mark Settled';
+      settleBtn.title = inv.status === 'settled' ? 'Mark this invoice as unpaid' : 'Mark this invoice as paid';
       settleBtn.addEventListener("click", () => toggleSettled(inv));
       statusTd.append(badge, document.createElement("br"), settleBtn);
       row.appendChild(statusTd);
@@ -399,6 +404,7 @@
       const delBtn = document.createElement("button");
       delBtn.className = "btn small danger";
       delBtn.textContent = "Delete";
+      delBtn.title = "Delete this invoice";
       delBtn.addEventListener("click", () => deleteInvoiceConfirm(inv));
       actions.appendChild(delBtn);
       row.appendChild(actions);

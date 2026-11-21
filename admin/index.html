@@ -60,13 +60,13 @@
         <div class="form-field full">
           <span>Vehicle photos (optional)</span>
           <div class="image-previews" id="image-previews"></div>
-          <button type="button" class="upload-btn" id="upload-btn">Upload photos</button>
+          <button type="button" class="upload-btn" id="upload-btn" title="Upload vehicle photos">Upload photos</button>
           <input type="file" accept="image/*" multiple id="vehicle-image-input" hidden />
           <p class="upload-hint">Vehicle and booking data is saved to the cloud database. Photo uploads are not yet stored.</p>
         </div>
         <div class="form-actions">
-          <button class="btn primary" type="submit" id="save-btn">Add Vehicle</button>
-          <button class="btn ghost" type="button" id="cancel-btn" hidden>Cancel edit</button>
+          <button class="btn primary" type="submit" id="save-btn" title="Save this vehicle to the database">Add Vehicle</button>
+          <button class="btn ghost" type="button" id="cancel-btn" hidden title="Discard changes and clear the form">Cancel edit</button>
         </div>
       </form>
     </section>
@@ -92,7 +92,7 @@
           </label>
         </div>
         <div class="form-actions">
-          <button class="btn primary" type="submit">Create booking</button>
+          <button class="btn primary" type="submit" title="Save a new booking">Create booking</button>
         </div>
       </form>
     </section>
@@ -145,7 +145,7 @@
           </label>
         </div>
         <div class="form-actions">
-          <button class="btn primary" type="submit">Create Invoice</button>
+          <button class="btn primary" type="submit" title="Save a new invoice">Create Invoice</button>
         </div>
       </form>
     </section>
