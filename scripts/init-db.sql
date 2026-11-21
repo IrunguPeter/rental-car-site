@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS bookings (
   id SERIAL PRIMARY KEY,
   vehicle_id INTEGER NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE,
   customer_name TEXT NOT NULL,
+  customer_phone TEXT,
+  customer_email TEXT,
   start_date DATE NOT NULL,
   end_date DATE NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending',
@@ -29,6 +31,9 @@ CREATE TABLE IF NOT EXISTS invoices (
   settled_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS customer_phone TEXT;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS customer_email TEXT;
 
 CREATE TABLE IF NOT EXISTS leads (
   id SERIAL PRIMARY KEY,

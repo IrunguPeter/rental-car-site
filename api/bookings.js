@@ -1,13 +1,15 @@
 import { Client } from 'pg';
+import { requireAdmin } from './_admin.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Key');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
+  if (!requireAdmin(req, res)) return;
 
   const { id } = req.query;
   const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL;
@@ -25,7 +27,8 @@ export default async function handler(req, res) {
       if (id) {
         const result = await client.query(
           `SELECT b.id, b.vehicle_id, v.name AS vehicle_name,
-                  b.customer_name, b.start_date, b.end_date, b.status, b.created_at
+                  b.customer_name, b.customer_phone, b.customer_email,
+                  b.start_date, b.end_date, b.status, b.created_at
            FROM bookings b
            LEFT JOIN vehicles v ON v.id = b.vehicle_id
            WHERE b.id = $1`,
@@ -36,7 +39,8 @@ export default async function handler(req, res) {
       }
       const result = await client.query(
         `SELECT b.id, b.vehicle_id, v.name AS vehicle_name,
-                b.customer_name, b.start_date, b.end_date, b.status, b.created_at
+                b.customer_name, b.customer_phone, b.customer_email,
+                b.start_date, b.end_date, b.status, b.created_at
          FROM bookings b
          LEFT JOIN vehicles v ON v.id = b.vehicle_id
          ORDER BY b.created_at DESC`
@@ -45,7 +49,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-      const { vehicle_id, customer_name, start_date, end_date, status = 'pending' } = req.body;
+      const { vehicle_id, customer_name, customer_phone = null, customer_email = null, start_date, end_date, status = 'pending' } = req.body;
       if (!vehicle_id || !customer_name || !start_date || !end_date) {
         return res.status(400).json({ error: 'vehicle_id, customer_name, start_date, and end_date are required' });
       }
@@ -68,8 +72,8 @@ export default async function handler(req, res) {
         return res.status(409).json({ error: 'Vehicle is already booked for part of those dates' });
       }
       const result = await client.query(
-        'INSERT INTO bookings (vehicle_id, customer_name, start_date, end_date, status) VALUES ($1, $2, $3, $4, $5) RETURNING id, vehicle_id, customer_name, start_date, end_date, status, created_at',
-        [vehicle_id, customer_name, start_date, end_date, status]
+        'INSERT INTO bookings (vehicle_id, customer_name, customer_phone, customer_email, start_date, end_date, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, vehicle_id, customer_name, customer_phone, customer_email, start_date, end_date, status, created_at',
+        [vehicle_id, customer_name, customer_phone, customer_email, start_date, end_date, status]
       );
       return res.status(201).json(result.rows[0]);
     }

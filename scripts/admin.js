@@ -10,12 +10,29 @@
   let bookings = [];
   let invoices = [];
 
+  function adminKey() {
+    return sessionStorage.getItem("aurora_admin_key") || "";
+  }
+
+  function requestAdminKey() {
+    const key = window.prompt("Enter the Aurora admin API key:");
+    if (key) sessionStorage.setItem("aurora_admin_key", key);
+    return key || "";
+  }
+
   // ---------- API helpers ----------
   async function api(path, opts = {}) {
-    const res = await fetch(API + path, {
-      headers: { "Content-Type": "application/json", ...opts.headers },
-      ...opts,
-    });
+    const headers = { "Content-Type": "application/json", ...opts.headers };
+    const key = adminKey();
+    if (key) headers["X-Admin-Key"] = key;
+    let res = await fetch(API + path, { headers, ...opts });
+    if (res.status === 401 && !key) {
+      const newKey = requestAdminKey();
+      if (newKey) {
+        headers["X-Admin-Key"] = newKey;
+        res = await fetch(API + path, { headers, ...opts });
+      }
+    }
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error || "Request failed (" + res.status + ")");
