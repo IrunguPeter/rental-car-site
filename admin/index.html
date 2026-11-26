@@ -6,13 +6,23 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Aurora Admin — Staff sign in</title>
   <link rel="icon" href="../assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" />
   <link rel="stylesheet" href="../styles/admin.css" />
 </head>
 <body>
   <!-- Sign-in gate: no dashboard data is rendered until the API confirms a session -->
   <div class="auth-screen" id="auth-screen">
     <form class="auth-card" id="login-form" novalidate>
-      <div class="auth-brand">Aurora <span>Car Rental</span></div>
+      <div class="auth-brand">
+        <svg class="logo-mark" aria-hidden="true" viewBox="0 0 32 32" width="26" height="26">
+          <path fill="currentColor" d="M6 12v8.5l3.6-3.1a1.5 1.5 0 0 1 1.8.2L13 21.5h4l2.6-3.9a1.5 1.5 0 0 1 1.8-.2L25 20.5V12z"/>
+          <circle cx="8.5" cy="22.5" r="1.8" fill="#d4a017"/>
+          <circle cx="23.5" cy="22.5" r="1.8" fill="#d4a017"/>
+        </svg>
+        Aurora <span>Staff</span>
+      </div>
       <h1>Staff sign in</h1>
       <p class="auth-sub">Authorized team members only.</p>
 
@@ -32,8 +42,15 @@
   </div>
 
   <div id="admin-app" hidden>
-    <header class="admin-header container">
-      <h1>Admin <span class="admin-accent">Dashboard</span></h1>
+    <header class="admin-header">
+      <div class="admin-brand">
+        <svg class="logo-mark" aria-hidden="true" viewBox="0 0 32 32" width="28" height="28">
+          <path fill="currentColor" d="M6 12v8.5l3.6-3.1a1.5 1.5 0 0 1 1.8.2L13 21.5h4l2.6-3.9a1.5 1.5 0 0 1 1.8-.2L25 20.5V12z"/>
+          <circle cx="8.5" cy="22.5" r="1.8" fill="#d4a017"/>
+          <circle cx="23.5" cy="22.5" r="1.8" fill="#d4a017"/>
+        </svg>
+        <h1>Aurora <span class="admin-accent">Admin</span></h1>
+      </div>
       <div class="admin-header-actions">
         <span class="account-label" id="account-label"></span>
         <button class="btn ghost small" type="button" id="change-password-btn" title="Change your password">Password</button>

@@ -4,7 +4,7 @@
   "description": "Aurora Car Rental Nairobi - static site with Vercel Postgres backend",
   "main": "index.html",
   "scripts": {
-    "dev": "vercel dev",
+    "start": "vercel dev",
     "deploy": "vercel --prod"
   },
   "dependencies": {

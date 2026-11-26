@@ -201,6 +201,7 @@
       const actions = document.createElement("td");
       const resetBtn = document.createElement("button");
       resetBtn.className = "btn small edit";
+      resetBtn.type = "button";
       resetBtn.textContent = "Reset password";
       resetBtn.title = "Set a new password for this user";
       resetBtn.addEventListener("click", () => resetUserPassword(user));
@@ -208,6 +209,7 @@
 
       const roleBtn = document.createElement("button");
       roleBtn.className = "btn small archive";
+      roleBtn.type = "button";
       roleBtn.textContent = user.role === "admin" ? "Make worker" : "Make admin";
       roleBtn.title = "Change this user's role";
       roleBtn.addEventListener("click", () => changeUserRole(user));
@@ -215,6 +217,7 @@
 
       const toggleBtn = document.createElement("button");
       toggleBtn.className = "btn small danger";
+      toggleBtn.type = "button";
       toggleBtn.textContent = user.is_active ? "Disable" : "Enable";
       toggleBtn.title = user.is_active ? "Disable this account" : "Enable this account";
       toggleBtn.addEventListener("click", () => toggleUserActive(user));
@@ -307,9 +310,9 @@
   // ---------- Status & stats ----------
   function vehicleStatus(v) {
     if (v.status === "archived") return { label: "Archived", badge: "archived", note: "Hidden from the rental fleet." };
-    const active = bookings.find((b) => b.vehicle_id === v.id && isActive(b));
+    const active = bookings.find((b) => Number(b.vehicle_id) === Number(v.id) && isActive(b));
     if (active) return { label: "Rented", badge: "rented", note: "Rented until " + fmtDate(active.end_date) };
-    const upcoming = bookings.find((b) => b.vehicle_id === v.id && parseDate(b.start_date) > parseDate(todayStr()));
+    const upcoming = bookings.find((b) => Number(b.vehicle_id) === Number(v.id) && parseDate(b.start_date) > parseDate(todayStr()));
     if (upcoming) return { label: "Upcoming", badge: "upcoming", note: "Booked from " + fmtDate(upcoming.start_date) };
     return { label: "Available", badge: "available", note: "Ready for new bookings" };
   }
@@ -397,26 +400,33 @@
     note.className = "vehicle-note";
     note.textContent = st.note;
 
-    const actions = document.createElement("div");
-    actions.className = "vehicle-actions";
-    const editBtn = document.createElement("button");
-    editBtn.className = "btn small edit";
-    editBtn.textContent = "Edit";
-    editBtn.title = "Edit this vehicle";
-    editBtn.addEventListener("click", () => editVehicle(v));
-    const archiveBtn = document.createElement("button");
-    archiveBtn.className = "btn small archive";
-    archiveBtn.textContent = v.status === "archived" ? "Restore" : "Archive";
-    archiveBtn.title = v.status === "archived" ? "Restore this vehicle" : "Archive this vehicle";
-    archiveBtn.addEventListener("click", () => archiveVehicle(v));
-    const delBtn = document.createElement("button");
-    delBtn.className = "btn small danger";
-    delBtn.textContent = "Delete";
-    delBtn.title = "Delete this vehicle";
-    delBtn.addEventListener("click", () => deleteVehicleConfirm(v));
-    actions.append(editBtn, archiveBtn, delBtn);
+    body.append(head, price, note);
 
-    body.append(head, price, note, actions);
+    if (currentUser && currentUser.role === "admin") {
+      const actions = document.createElement("div");
+      actions.className = "vehicle-actions";
+      const editBtn = document.createElement("button");
+      editBtn.className = "btn small edit";
+      editBtn.type = "button";
+      editBtn.textContent = "Edit";
+      editBtn.title = "Edit this vehicle";
+      editBtn.addEventListener("click", () => editVehicle(v));
+      const archiveBtn = document.createElement("button");
+      archiveBtn.className = "btn small archive";
+      archiveBtn.type = "button";
+      archiveBtn.textContent = v.status === "archived" ? "Restore" : "Archive";
+      archiveBtn.title = v.status === "archived" ? "Restore this vehicle" : "Archive this vehicle";
+      archiveBtn.addEventListener("click", () => archiveVehicle(v));
+      const delBtn = document.createElement("button");
+      delBtn.className = "btn small danger";
+      delBtn.type = "button";
+      delBtn.textContent = "Delete";
+      delBtn.title = "Delete this vehicle";
+      delBtn.addEventListener("click", () => deleteVehicleConfirm(v));
+      actions.append(editBtn, archiveBtn, delBtn);
+      body.appendChild(actions);
+    }
+
     card.append(imgWrap, body);
     return card;
   }
@@ -460,7 +470,7 @@
     tbody.innerHTML = "";
     empty.hidden = bookings.length > 0;
     bookings.forEach((b) => {
-      const vehicle = vehicles.find((v) => v.id === b.vehicle_id);
+      const vehicle = vehicles.find((v) => Number(v.id) === Number(b.vehicle_id));
       const row = document.createElement("tr");
       const cells = [
         vehicle ? vehicle.name : "Vehicle #" + b.vehicle_id,
@@ -477,6 +487,7 @@
       const actions = document.createElement("td");
       const cancelBtn = document.createElement("button");
       cancelBtn.className = "btn small danger";
+      cancelBtn.type = "button";
       cancelBtn.textContent = "Cancel";
       cancelBtn.title = "Cancel this booking";
       cancelBtn.addEventListener("click", () => cancelBooking(b));
@@ -504,8 +515,8 @@
     tbody.innerHTML = "";
     empty.hidden = invoices.length > 0;
     invoices.forEach((inv) => {
-      const booking = bookings.find((b) => b.id === inv.booking_id);
-      const vehicle = booking ? vehicles.find((v) => v.id === booking.vehicle_id) : null;
+      const booking = bookings.find((b) => Number(b.id) === Number(inv.booking_id));
+      const vehicle = booking ? vehicles.find((v) => Number(v.id) === Number(booking.vehicle_id)) : null;
       const st = invoiceStatusLabel(inv);
       const row = document.createElement("tr");
       const cells = [
@@ -514,7 +525,6 @@
         inv.customer_name || (booking ? booking.customer_name : "-"),
         "KSh " + inv.amount,
         fmtDate(inv.due_date),
-        st.label,
       ];
       cells.forEach((text) => {
         const td = document.createElement("td");
@@ -528,8 +538,9 @@
       badge.textContent = st.label;
       const settleBtn = document.createElement("button");
       settleBtn.className = "btn small settle";
-      settleBtn.textContent = inv.status === 'settled' ? 'Unsettle' : 'Mark Settled';
-      settleBtn.title = inv.status === 'settled' ? 'Mark this invoice as unpaid' : 'Mark this invoice as paid';
+      settleBtn.type = "button";
+      settleBtn.textContent = inv.status === "settled" ? "Unsettle" : "Mark Settled";
+      settleBtn.title = inv.status === "settled" ? "Mark this invoice as unpaid" : "Mark this invoice as paid";
       settleBtn.addEventListener("click", () => toggleSettled(inv));
       statusTd.append(badge, document.createElement("br"), settleBtn);
       row.appendChild(statusTd);
@@ -537,6 +548,7 @@
       const actions = document.createElement("td");
       const delBtn = document.createElement("button");
       delBtn.className = "btn small danger";
+      delBtn.type = "button";
       delBtn.textContent = "Delete";
       delBtn.title = "Delete this invoice";
       delBtn.addEventListener("click", () => deleteInvoiceConfirm(inv));
@@ -632,7 +644,12 @@
     try {
       await loadVehicles();
       await loadBookings();
-      await loadInvoices();
+      // Invoices are admin-only on the API — skip for workers so their dashboard still loads.
+      if (currentUser && currentUser.role === "admin") {
+        await loadInvoices();
+      } else {
+        invoices = [];
+      }
       renderAll();
       initialized = true;
     } catch (err) {
@@ -650,6 +667,7 @@
     byId("status").value = "available";
     byId("save-btn").textContent = "Add Vehicle";
     byId("cancel-btn").hidden = true;
+    clearImagePreviews();
   }
 
   byId("vehicle-form").addEventListener("submit", async (e) => {
@@ -680,6 +698,57 @@
 
   byId("cancel-btn").addEventListener("click", () => resetVehicleForm());
 
+  // ---------- Photo previews (local only; not persisted yet) ----------
+  const previewUrls = [];
+  function clearImagePreviews() {
+    const wrap = byId("image-previews");
+    wrap.innerHTML = "";
+    previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    previewUrls.length = 0;
+    byId("vehicle-image-input").value = "";
+  }
+
+  function renderImagePreviews(fileList) {
+    const files = Array.from(fileList || []).filter((f) => f.type.startsWith("image/")).slice(0, 8);
+    const wrap = byId("image-previews");
+    previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    previewUrls.length = 0;
+    wrap.innerHTML = "";
+    files.forEach((file) => {
+      const url = URL.createObjectURL(file);
+      previewUrls.push(url);
+      const item = document.createElement("div");
+      item.className = "image-preview";
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = file.name;
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "preview-remove";
+      remove.setAttribute("aria-label", "Remove photo");
+      remove.textContent = "×";
+      remove.addEventListener("click", () => {
+        const idx = previewUrls.indexOf(url);
+        if (idx >= 0) {
+          URL.revokeObjectURL(previewUrls[idx]);
+          previewUrls.splice(idx, 1);
+        }
+        item.remove();
+      });
+      item.append(img, remove);
+      wrap.appendChild(item);
+    });
+    if (previewUrls.length) {
+      toast("Preview ready — photo cloud storage is not enabled yet.");
+    }
+  }
+
+  byId("upload-btn").addEventListener("click", () => byId("vehicle-image-input").click());
+  byId("vehicle-image-input").addEventListener("change", (e) => {
+    const files = Array.from(e.target.files || []);
+    renderImagePreviews(files);
+  });
+
   // ---------- Booking form ----------
   function setBookingDefaults() {
     byId("booking-start").value = todayStr();
@@ -702,7 +771,8 @@
     if (endDate < today) { toast("The return date is in the past."); return; }
     if (startDate > endDate) { toast("The start date must be before the return date."); return; }
 
-    const vehicle = vehicles.find((v) => v.id === vehicleId);
+    const vehicle = vehicles.find((v) => Number(v.id) === Number(vehicleId));
+    if (!vehicle) { toast("Choose a valid vehicle."); return; }
     const isActiveBooking = !!today && startDate <= today && endDate >= today;
 
     try {
@@ -727,7 +797,7 @@
     const select = byId("invoice-booking");
     select.innerHTML = '<option value="">— Choose a booking —</option>';
     bookings.forEach((b) => {
-      const vehicle = vehicles.find((v) => v.id === b.vehicle_id);
+      const vehicle = vehicles.find((v) => Number(v.id) === Number(b.vehicle_id));
       const o = document.createElement("option");
       o.value = b.id;
       o.textContent = "Booking #" + String(b.id).padStart(4, "0") + " — " + (vehicle ? vehicle.name : "Vehicle") + " (" + fmtDate(b.start_date) + " to " + fmtDate(b.end_date) + ")";
